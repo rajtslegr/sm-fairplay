@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 
 import Button from '@components/Button';
 
@@ -6,7 +6,7 @@ interface FileUploadProps {
   onFileUpload: (file: File) => void;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
+const FileUpload = ({ onFileUpload }: FileUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {

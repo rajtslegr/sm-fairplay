@@ -54,29 +54,31 @@ const App = () => {
   return (
     <div className="flex min-h-screen flex-col bg-[#242424] font-inter text-base font-normal leading-6 text-gray-50">
       <header className="fixed inset-x-0 top-0 z-10 bg-[#242424] p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-8">
+        <div className="flex flex-col items-center justify-between space-y-2 sm:flex-row sm:space-y-0">
+          <div className="flex items-center gap-4 sm:gap-8">
             <div className="flex">⚽</div>
             <nav>
-              <span className="mr-4">STEM/MARK Fair Play</span>
+              <span>STEM/MARK Fair Play</span>
             </nav>
           </div>
           <a
             href="https://github.com/rajtslegr/sm-fairplay"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-300 hover:text-white"
+            className="text-gray-300 hover:text-[#982054]"
           >
             GitHub
           </a>
         </div>
       </header>
-      <main className="mt-20 flex grow flex-col p-4">
+      <main className="mt-24 flex grow flex-col sm:mt-16">
         <div
           ref={contentRef}
-          className="flex h-[calc(100vh-5rem)] flex-col items-center justify-start overflow-y-auto"
+          className="flex h-[calc(100vh-6rem)] flex-col items-center justify-start overflow-y-auto px-4 py-8 sm:h-[calc(100vh-4rem)] sm:py-12"
         >
-          <h1 className="mb-4 text-2xl font-bold">Soccer Team Selection</h1>
+          <h1 className="mb-4 text-xl font-bold sm:text-2xl">
+            Soccer Team Selection
+          </h1>
           <FileUpload onFileUpload={handleFileUpload} />
           {players.length > 0 && (
             <PlayerSelection

@@ -21,7 +21,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
   };
 
   return (
-    <div className="mb-4">
+    <div className="mb-12">
       <input
         type="file"
         ref={fileInputRef}

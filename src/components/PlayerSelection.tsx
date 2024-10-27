@@ -85,7 +85,9 @@ const PlayerSelection: React.FC<PlayerSelectionProps> = ({
           className="w-full rounded border p-2 text-black sm:w-auto"
         />
         <div className="flex flex-col gap-2 sm:flex-row">
-          <Button onClick={addNewPlayer}>Add New Player</Button>
+          <Button onClick={addNewPlayer} disabled={newPlayerName.trim() === ''}>
+            Add New Player
+          </Button>
           <Button
             onClick={handleSubmit}
             active={listChanged && selectedPlayers.length > 5}
@@ -93,7 +95,9 @@ const PlayerSelection: React.FC<PlayerSelectionProps> = ({
           >
             Generate Teams
           </Button>
-          <Button onClick={handleReset}>Reset Selection</Button>
+          <Button onClick={handleReset} disabled={selectedPlayers.length === 0}>
+            Reset Selection
+          </Button>
         </div>
       </div>
     </div>

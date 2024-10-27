@@ -1,6 +1,6 @@
-import { PLAYER_SCORE_WEIGHTS } from '../constants';
-import { selectTeams, calculatePlayerScore } from '../teamSelection';
-import { Player } from '../xlsxParser';
+import { PLAYER_SCORE_WEIGHTS } from './constants';
+import { selectTeams, calculatePlayerScore } from './teamSelection';
+import { Player } from './xlsxParser';
 
 describe('Team Selection', () => {
   const createMockPlayer = (

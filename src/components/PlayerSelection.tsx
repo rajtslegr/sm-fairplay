@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Button from '@components/Button';
 import { Player } from '@utils/xlsxParser';
@@ -17,13 +17,20 @@ const PlayerSelection: React.FC<PlayerSelectionProps> = ({
   const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([]);
   const [newPlayerName, setNewPlayerName] = useState('');
   const [allPlayers, setAllPlayers] = useState<Player[]>(players);
+  const [listChanged, setListChanged] = useState(false);
+
+  useEffect(() => {
+    setAllPlayers(players);
+  }, [players]);
 
   const togglePlayerSelection = (player: Player) => {
-    if (selectedPlayers.includes(player)) {
-      setSelectedPlayers(selectedPlayers.filter((p) => p !== player));
-    } else {
-      setSelectedPlayers([...selectedPlayers, player]);
-    }
+    setSelectedPlayers((prev) => {
+      const newSelection = prev.includes(player)
+        ? prev.filter((p) => p !== player)
+        : [...prev, player];
+      setListChanged(true);
+      return newSelection;
+    });
   };
 
   const addNewPlayer = () => {
@@ -38,19 +45,22 @@ const PlayerSelection: React.FC<PlayerSelectionProps> = ({
         assistsPerMatch: 0,
         pointsPerMatch: 0,
       };
-      setAllPlayers([...allPlayers, newPlayer]);
-      setSelectedPlayers([...selectedPlayers, newPlayer]);
+      setAllPlayers((prev) => [...prev, newPlayer]);
+      setSelectedPlayers((prev) => [...prev, newPlayer]);
       setNewPlayerName('');
+      setListChanged(true);
     }
   };
 
   const handleSubmit = () => {
     onPlayersSelected(selectedPlayers);
+    setListChanged(false);
   };
 
   const handleReset = () => {
     setSelectedPlayers([]);
     onResetSelection();
+    setListChanged(false);
   };
 
   return (
@@ -76,7 +86,13 @@ const PlayerSelection: React.FC<PlayerSelectionProps> = ({
         />
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button onClick={addNewPlayer}>Add New Player</Button>
-          <Button onClick={handleSubmit}>Generate Teams</Button>
+          <Button
+            onClick={handleSubmit}
+            active={listChanged && selectedPlayers.length > 5}
+            disabled={selectedPlayers.length < 6}
+          >
+            Generate Teams
+          </Button>
           <Button onClick={handleReset}>Reset Selection</Button>
         </div>
       </div>

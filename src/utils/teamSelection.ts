@@ -11,6 +11,9 @@ export const calculatePlayerScore = (player: Player): number => {
   );
 };
 
+export const calculateTeamScore = (team: Player[]) =>
+  team.reduce((sum, player) => sum + calculatePlayerScore(player), 0);
+
 export const selectTeams = (players: Player[]): [Player[], Player[]] => {
   const sortedPlayers = [...players].sort(
     (a, b) => calculatePlayerScore(b) - calculatePlayerScore(a),
@@ -38,7 +41,6 @@ export const selectTeams = (players: Player[]): [Player[], Player[]] => {
     }
   });
 
-  // Balance the teams if there's a significant difference in player count
   while (Math.abs(teamACount - teamBCount) > 1) {
     if (teamACount > teamBCount) {
       const player = teamA.pop();

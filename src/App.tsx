@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 
 import FileUpload from '@components/FileUpload';
+import InfoModal from '@components/InfoModal';
 import PlayerSelection from '@components/PlayerSelection';
 import SoccerBall from '@components/SoccerBall';
 import TeamDisplay from '@components/TeamDisplay';
-import { selectTeams } from '@utils/teamSelection';
+import { selectTeams, calculatePlayerScore } from '@utils/teamSelection';
 import { parseXlsxData, Player } from '@utils/xlsxParser';
 
 const App = () => {
@@ -12,10 +13,12 @@ const App = () => {
   const [teamA, setTeamA] = useState<Player[]>([]);
   const [teamB, setTeamB] = useState<Player[]>([]);
   const teamDisplayRef = useRef<HTMLDivElement>(null);
+  const [showInfo, setShowInfo] = useState(false);
+  const [bestPlayer, setBestPlayer] = useState<Player | null>(null);
 
   useEffect(() => {
     if (teamA.length > 0 && teamB.length > 0 && teamDisplayRef.current) {
-      const headerHeight = 96; // Adjust this value if your header height changes
+      const headerHeight = 96;
       const teamDisplayRect = teamDisplayRef.current.getBoundingClientRect();
       const scrollPosition =
         window.scrollY + teamDisplayRect.top - headerHeight;
@@ -28,9 +31,20 @@ const App = () => {
   }, [teamA, teamB]);
 
   const handleFileUpload = async (file: File) => {
+    setTeamA([]);
+    setTeamB([]);
+    setPlayers([]);
+    setBestPlayer(null);
+
     try {
       const parsedPlayers = await parseXlsxData(file);
       setPlayers(parsedPlayers);
+      const best = parsedPlayers.reduce((prev, current) =>
+        calculatePlayerScore(current) > calculatePlayerScore(prev)
+          ? current
+          : prev,
+      );
+      setBestPlayer(best);
     } catch (error) {
       console.error('Error parsing XLSX file:', error);
     }
@@ -62,14 +76,22 @@ const App = () => {
                 <span>Fair Play</span>
               </nav>
             </div>
-            <a
-              href="https://github.com/rajtslegr/sm-fairplay"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-300 hover:text-[#982054]"
-            >
-              GitHub
-            </a>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setShowInfo(true)}
+                className="text-gray-300 hover:text-[#982054]"
+              >
+                Info
+              </button>
+              <a
+                href="https://github.com/rajtslegr/sm-fairplay"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-300 hover:text-[#982054]"
+              >
+                GitHub
+              </a>
+            </div>
           </div>
         </div>
       </header>
@@ -86,13 +108,16 @@ const App = () => {
               />
             )}
             <div ref={teamDisplayRef} className="w-full max-w-4xl">
-              {teamA.length > 0 && teamB.length > 0 && (
-                <TeamDisplay teamA={teamA} teamB={teamB} />
-              )}
+              <TeamDisplay
+                teamA={teamA}
+                teamB={teamB}
+                bestPlayer={bestPlayer}
+              />
             </div>
           </div>
         </main>
       </div>
+      <InfoModal isOpen={showInfo} onClose={() => setShowInfo(false)} />
     </div>
   );
 };

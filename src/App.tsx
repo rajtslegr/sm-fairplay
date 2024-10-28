@@ -62,9 +62,10 @@ const App = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#242424] font-inter text-gray-50">
+    <div className="flex min-h-screen flex-col bg-background font-inter text-gray-50">
       <header className="fixed z-20 w-full">
-        <div className="bg-[#242424]/70 shadow-md backdrop-blur-md">
+        <div className="bg-background/70 shadow-md backdrop-blur-md">
+          {' '}
           <div className="mx-auto flex max-w-7xl items-center justify-between p-4">
             <div className="flex items-center space-x-4">
               <img

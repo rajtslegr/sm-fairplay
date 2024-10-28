@@ -9,9 +9,9 @@ type ButtonProps = ComponentProps<'button'> & {
 const Button = ({ children, active, disabled, ...props }: ButtonProps) => (
   <button
     className={clsx(
-      'w-full cursor-pointer rounded-lg border border-solid border-transparent bg-[#1a1a1a] p-2 text-sm font-medium text-gray-50 transition-colors hover:border-[#982054] sm:w-auto sm:text-base',
+      'w-full cursor-pointer rounded-lg border border-solid border-transparent bg-background-card p-2 text-sm font-medium text-gray-50 transition-colors hover:border-primary sm:w-auto sm:text-base',
       {
-        'rounded bg-[#982054]': active,
+        'rounded bg-primary': active,
         'cursor-not-allowed opacity-50': disabled,
       },
     )}

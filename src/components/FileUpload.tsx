@@ -95,9 +95,9 @@ const FileUpload = ({ onFileUpload }: FileUploadProps) => {
       <div
         onClick={handleClick}
         className={clsx(
-          'flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors hover:border-[#982054] hover:bg-[#982054]/5',
+          'flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors hover:border-primary hover:bg-primary/5',
           {
-            'border-[#982054] bg-[#982054]/10': isDragging,
+            'border-primary bg-primary/10': isDragging,
             'border-gray-300': !isDragging,
           },
         )}

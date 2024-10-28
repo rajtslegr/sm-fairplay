@@ -12,7 +12,7 @@ const PlayerCard = ({ player, teamColor }: PlayerCardProps) => (
   <li
     key={player.name}
     className={clsx(
-      'mb-2 overflow-hidden rounded-lg border border-solid border-transparent bg-[#1a1a1a] p-3 text-base font-medium text-gray-50 transition-colors',
+      'mb-2 overflow-hidden rounded-lg border border-solid border-transparent bg-background-card p-3 text-base font-medium text-gray-50 transition-colors',
       `hover:border-[${teamColor}]`,
     )}
   >

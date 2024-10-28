@@ -36,7 +36,7 @@ const TeamDisplay = ({ teamA, teamB, bestPlayer }: TeamDisplayProps) => {
       {teamA.length > 0 && teamB.length > 0 && (
         <div className="flex flex-col gap-4 sm:flex-row">
           <div className="w-full sm:w-1/2">
-            <h3 className="mb-4 rounded-lg bg-gradient-to-r from-[#689820] to-[#4d7118] px-4 py-2 text-center text-lg font-bold text-white shadow-md sm:text-xl">
+            <h3 className="mb-4 rounded-lg bg-gradient-to-r from-secondary to-secondary-dark px-4 py-2 text-center text-lg font-bold text-white shadow-md sm:text-xl">
               {teamAScore.toFixed(2)}
             </h3>
             <ul className="space-y-4">
@@ -50,7 +50,7 @@ const TeamDisplay = ({ teamA, teamB, bestPlayer }: TeamDisplayProps) => {
             </ul>
           </div>
           <div className="w-full sm:w-1/2">
-            <h3 className="mb-4 rounded-lg bg-gradient-to-r from-[#982020] to-[#721818] px-4 py-2 text-center text-lg font-bold text-white shadow-md sm:text-xl">
+            <h3 className="mb-4 rounded-lg bg-gradient-to-r from-primary to-primary-dark px-4 py-2 text-center text-lg font-bold text-white shadow-md sm:text-xl">
               {teamBScore.toFixed(2)}
             </h3>
             <ul className="space-y-4">

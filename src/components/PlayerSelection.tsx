@@ -20,8 +20,8 @@ const PlayerSelection = ({
   const [listChanged, setListChanged] = useState(false);
 
   const togglePlayerSelection = (player: Player) => {
-    const newSelection = selectedPlayers.includes(player)
-      ? selectedPlayers.filter((p) => p !== player)
+    const newSelection = selectedPlayers.some((p) => p.name === player.name)
+      ? selectedPlayers.filter((p) => p.name !== player.name)
       : [...selectedPlayers, player];
 
     setSelectedPlayers(newSelection);
@@ -65,7 +65,7 @@ const PlayerSelection = ({
           <Button
             key={player.name}
             onClick={() => togglePlayerSelection(player)}
-            active={selectedPlayers.includes(player)}
+            active={selectedPlayers.some((p) => p.name === player.name)}
           >
             {player.name}
           </Button>

@@ -20,6 +20,7 @@ export const Homepage = () => {
     setTeams,
     setBestPlayer,
     reset,
+    resetSelection,
   } = useStore();
 
   const teamDisplayRef = useRef<HTMLDivElement>(null);
@@ -81,7 +82,7 @@ export const Homepage = () => {
           <PlayerSelection
             players={players}
             onPlayersSelected={handlePlayersSelected}
-            onResetSelection={reset}
+            onResetSelection={resetSelection}
           />
         )}
         <div ref={teamDisplayRef} className="w-full max-w-4xl">

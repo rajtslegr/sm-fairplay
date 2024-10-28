@@ -26,7 +26,7 @@ export const processWorkbook = (workbook: any): Player[] => {
     const goals = Number(scorer.__EMPTY_2) || 0;
     const assists = Number((assistsData[index] as any)?.__EMPTY_2) || 0;
     const points = Number((pointsData[index] as any)?.__EMPTY_2) || 0;
-    const matches = Number(scorer.__EMPTY_1) || 1;
+    const matches = Number(scorer.__EMPTY_1) || 0;
 
     return {
       name,
@@ -34,13 +34,15 @@ export const processWorkbook = (workbook: any): Player[] => {
       assists,
       points,
       matches,
-      goalsPerMatch: goals / matches,
-      assistsPerMatch: assists / matches,
-      pointsPerMatch: points / matches,
+      goalsPerMatch: matches > 0 ? goals / matches : 0,
+      assistsPerMatch: matches > 0 ? assists / matches : 0,
+      pointsPerMatch: matches > 0 ? points / matches : 0,
     };
   });
 
-  return players.filter((player) => player.name && player.name !== 'Jméno');
+  return players.filter(
+    (player) => player.name && player.name !== 'Jméno' && player.matches > 0,
+  );
 };
 
 export const parseXlsxData = (file: File): Promise<Player[]> => {

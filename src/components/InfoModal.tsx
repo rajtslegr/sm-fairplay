@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react';
+
 import { PLAYER_SCORE_WEIGHTS } from '@utils/constants';
 
 interface InfoModalProps {
@@ -6,14 +8,46 @@ interface InfoModalProps {
 }
 
 const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener(
+        'touchstart',
+        handleClickOutside as unknown as EventListener,
+      );
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener(
+        'touchstart',
+        handleClickOutside as unknown as EventListener,
+      );
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
     <>
-      <div className="fixed inset-0 z-40 bg-black/25 backdrop-blur-sm"></div>
+      <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-md"></div>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden p-4 outline-none focus:outline-none">
         <div className="relative mx-auto w-full max-w-md sm:max-w-lg md:max-w-2xl">
-          <div className="relative flex w-full flex-col rounded-lg border-0 bg-[#1a1a1a] shadow-lg outline-none focus:outline-none">
+          <div
+            ref={modalRef}
+            className="relative flex w-full flex-col rounded-lg border-0 bg-[#1a1a1a] shadow-lg outline-none focus:outline-none"
+          >
             <div className="flex items-start justify-between rounded-t border-b border-solid border-gray-600 p-5">
               <h3 className="text-xl font-semibold sm:text-2xl">
                 Calculation Method

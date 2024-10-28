@@ -90,8 +90,12 @@ const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
               </pre>
               <p className="text-sm sm:text-base">
                 Teams are then formed by distributing players based on their
-                calculated scores, ensuring that the total team scores are as
-                close as possible while maintaining similar team sizes.
+                calculated scores. The algorithm starts with the highest-scoring
+                players and alternates assigning them to teams to ensure
+                balance. This &quot;snake draft&quot; approach (e.g., Team A,
+                Team B, Team B, Team A) helps achieve similar total team scores.
+                The process continues until all players are assigned,
+                maintaining equal team sizes whenever possible.
               </p>
             </div>
           </div>

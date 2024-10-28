@@ -19,6 +19,9 @@ const FileUpload = ({ onFileUpload }: FileUploadProps) => {
     const file = event.target.files?.[0];
     if (file) {
       onFileUpload(file);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 

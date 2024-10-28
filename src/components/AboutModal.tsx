@@ -2,12 +2,12 @@ import { useEffect, useRef } from 'react';
 
 import { PLAYER_SCORE_WEIGHTS } from '@utils/constants';
 
-interface InfoModalProps {
+interface AboutModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
+const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -105,4 +105,4 @@ const InfoModal = ({ isOpen, onClose }: InfoModalProps) => {
   );
 };
 
-export default InfoModal;
+export default AboutModal;

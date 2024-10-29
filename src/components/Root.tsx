@@ -16,10 +16,10 @@ const Root = () => {
                 alt="STEM/MARK logo"
                 className="h-8 w-auto"
               />
-              <nav className="flex space-x-4">
+              <nav className="flex space-x-4 text-gray-300">
                 <Link
                   to="/"
-                  className="text-gray-300 hover:text-[#982054]"
+                  className="hover:text-[#982054]"
                   activeProps={{
                     className: `${fileUploaded ? 'text-[#982054]' : ''}`,
                   }}
@@ -29,7 +29,7 @@ const Root = () => {
                 {fileUploaded && (
                   <Link
                     to="/score"
-                    className="text-gray-300 hover:text-[#982054]"
+                    className="hover:text-[#982054]"
                     activeProps={{
                       className: 'text-[#982054]',
                     }}

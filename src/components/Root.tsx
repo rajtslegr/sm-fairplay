@@ -2,7 +2,7 @@ import { useStore } from '@store/useStore';
 import { Link, Outlet } from '@tanstack/react-router';
 
 const Root = () => {
-  const { players } = useStore();
+  const { players, setShowAbout } = useStore();
   const fileUploaded = players.length > 0;
 
   return (
@@ -41,7 +41,7 @@ const Root = () => {
             </div>
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => window.dispatchEvent(new Event('show-about'))}
+                onClick={() => setShowAbout(true)}
                 className="text-gray-300 hover:text-[#982054]"
               >
                 About

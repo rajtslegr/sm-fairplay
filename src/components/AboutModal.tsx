@@ -1,14 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useRef, useEffect } from 'react';
 
+import { useStore } from '@store/useStore';
 import { PLAYER_SCORE_WEIGHTS } from '@utils/constants';
 
-interface AboutModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
+const AboutModal = () => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const { showAbout, setShowAbout } = useStore();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -16,11 +13,11 @@ const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
         modalRef.current &&
         !modalRef.current.contains(event.target as Node)
       ) {
-        onClose();
+        setShowAbout(false);
       }
     };
 
-    if (isOpen) {
+    if (showAbout) {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener(
         'touchstart',
@@ -35,9 +32,9 @@ const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
         handleClickOutside as unknown as EventListener,
       );
     };
-  }, [isOpen, onClose]);
+  }, [showAbout, setShowAbout]);
 
-  if (!isOpen) return null;
+  if (!showAbout) return null;
 
   return (
     <>
@@ -54,9 +51,9 @@ const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
               </h3>
               <button
                 className="ml-auto border-0 bg-transparent p-1 text-2xl font-semibold leading-none text-gray-300 outline-none focus:outline-none sm:text-3xl"
-                onClick={onClose}
+                onClick={() => setShowAbout(false)}
               >
-                <span className="block size-6 bg-transparent text-2xl text-gray-300 outline-none focus:outline-none">
+                <span className="flex size-6 items-center justify-center bg-transparent text-2xl text-gray-300 outline-none focus:outline-none">
                   ×
                 </span>
               </button>

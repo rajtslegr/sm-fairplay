@@ -41,10 +41,10 @@ const Root = () => {
             </div>
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => window.dispatchEvent(new Event('show-info'))}
+                onClick={() => window.dispatchEvent(new Event('show-about'))}
                 className="text-gray-300 hover:text-[#982054]"
               >
-                Info
+                About
               </button>
               <a
                 href="https://github.com/rajtslegr/sm-fairplay"

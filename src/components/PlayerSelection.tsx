@@ -14,8 +14,14 @@ const PlayerSelection = ({
   onPlayersSelected,
   onResetSelection,
 }: PlayerSelectionProps) => {
-  const { selectedPlayers, allPlayers, setSelectedPlayers, setAllPlayers } =
-    useStore();
+  const {
+    selectedPlayers,
+    allPlayers,
+    setSelectedPlayers,
+    setAllPlayers,
+    teamA,
+    teamB,
+  } = useStore();
   const [newPlayerName, setNewPlayerName] = useState('');
   const [listChanged, setListChanged] = useState(false);
 
@@ -90,7 +96,14 @@ const PlayerSelection = ({
           >
             Generate Teams
           </Button>
-          <Button onClick={handleReset} disabled={selectedPlayers.length === 0}>
+          <Button
+            onClick={handleReset}
+            disabled={
+              selectedPlayers.length === 0 &&
+              teamA.length === 0 &&
+              teamB.length === 0
+            }
+          >
             Reset Selection
           </Button>
         </div>

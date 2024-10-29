@@ -4,14 +4,14 @@ import { useStore } from '@store/useStore';
 import { RouterProvider } from '@tanstack/react-router';
 
 const App = () => {
-  const { showInfo, setShowInfo } = useStore();
+  const { showAbout, setShowAbout } = useStore();
 
-  window.addEventListener('show-info', () => setShowInfo(true));
+  window.addEventListener('show-about', () => setShowAbout(true));
 
   return (
     <>
       <RouterProvider router={router} />
-      <AboutModal isOpen={showInfo} onClose={() => setShowInfo(false)} />
+      <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
     </>
   );
 };

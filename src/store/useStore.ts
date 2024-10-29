@@ -8,13 +8,13 @@ interface AppState {
   teamA: Player[];
   teamB: Player[];
   bestPlayer: Player | null;
-  showInfo: boolean;
+  showAbout: boolean;
   selectedPlayers: Player[];
   allPlayers: Player[];
   setPlayers: (players: Player[]) => void;
   setTeams: (teamA: Player[], teamB: Player[]) => void;
   setBestPlayer: (player: Player | null) => void;
-  setShowInfo: (show: boolean) => void;
+  setShowAbout: (show: boolean) => void;
   setSelectedPlayers: (players: Player[]) => void;
   setAllPlayers: (players: Player[]) => void;
   reset: () => void;
@@ -28,13 +28,13 @@ export const useStore = create(
       teamA: [],
       teamB: [],
       bestPlayer: null,
-      showInfo: false,
+      showAbout: false,
       selectedPlayers: [],
       allPlayers: [],
       setPlayers: (players) => set({ players, allPlayers: players }),
       setTeams: (teamA, teamB) => set({ teamA, teamB }),
       setBestPlayer: (bestPlayer) => set({ bestPlayer }),
-      setShowInfo: (showInfo) => set({ showInfo }),
+      setShowAbout: (showAbout) => set({ showAbout }),
       setSelectedPlayers: (selectedPlayers) => set({ selectedPlayers }),
       setAllPlayers: (allPlayers) => set({ allPlayers }),
       reset: () =>
@@ -49,6 +49,8 @@ export const useStore = create(
       resetSelection: () =>
         set({
           selectedPlayers: [],
+          teamA: [],
+          teamB: [],
         }),
     }),
     {

@@ -49,7 +49,7 @@ const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
             className="relative flex w-full flex-col rounded-lg border-0 bg-[#1a1a1a] shadow-lg outline-none focus:outline-none"
           >
             <div className="flex items-start justify-between rounded-t border-b border-solid border-gray-600 p-5">
-              <h3 className="text-xl font-semibold sm:text-2xl">
+              <h3 className="text-xl font-semibold text-gray-300 sm:text-2xl">
                 Calculation Method
               </h3>
               <button
@@ -85,8 +85,7 @@ const AboutModal = ({ isOpen, onClose }: AboutModalProps) => {
                 The player&apos;s score is calculated using the formula:
               </p>
               <pre className="mb-4 overflow-x-auto bg-[#242424] p-2 text-xs sm:text-sm">
-                PlayerScore = (GoalsPerMatch * GoalWeight) + (AssistsPerMatch *
-                AssistWeight) + (PointsPerMatch * PointWeight)
+                {`PlayerScore = \n  (GoalsPerMatch * GoalWeight) +\n  (AssistsPerMatch * AssistWeight) +\n  (PointsPerMatch * PointWeight)`}
               </pre>
               <p className="text-sm sm:text-base">
                 Teams are then formed by distributing players based on their

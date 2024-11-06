@@ -11,57 +11,58 @@ export const calculatePlayerScore = (player: Player): number => {
   );
 };
 
-export const calculateTeamScore = (team: Player[]) =>
+export const calculateTeamScore = (team: Player[]): number =>
   team.reduce((sum, player) => sum + calculatePlayerScore(player), 0);
 
 export const selectTeams = (players: Player[]): [Player[], Player[]] => {
   const sortedPlayers = [...players].sort(
     (a, b) => calculatePlayerScore(b) - calculatePlayerScore(a),
   );
-  const teamA: Player[] = [];
-  const teamB: Player[] = [];
-  let teamAScore = 0;
-  let teamBScore = 0;
-  let teamACount = 0;
-  let teamBCount = 0;
 
-  sortedPlayers.forEach((player) => {
-    const playerScore = calculatePlayerScore(player);
+  let bestTeamA: Player[] = [];
+  let bestTeamB: Player[] = [];
+  let minScoreDifference = Infinity;
+
+  const generateCombinations = (
+    remainingPlayers: Player[],
+    teamA: Player[],
+    teamB: Player[],
+  ) => {
+    if (remainingPlayers.length === 0) {
+      const teamAScore = calculateTeamScore(teamA);
+      const teamBScore = calculateTeamScore(teamB);
+      const scoreDifference = Math.abs(teamAScore - teamBScore);
+
+      if (
+        scoreDifference < minScoreDifference &&
+        Math.abs(teamA.length - teamB.length) <= 1
+      ) {
+        minScoreDifference = scoreDifference;
+        bestTeamA = [...teamA];
+        bestTeamB = [...teamB];
+      }
+      return;
+    }
+
+    const player = remainingPlayers[0];
+    const newRemainingPlayers = remainingPlayers.slice(1);
+
     if (
-      teamAScore <= teamBScore ||
-      (teamAScore > teamBScore && teamACount < teamBCount)
+      teamA.length <= teamB.length &&
+      teamA.length < Math.ceil(players.length / 2)
     ) {
-      teamA.push(player);
-      teamAScore += playerScore;
-      teamACount += 1;
-    } else {
-      teamB.push(player);
-      teamBScore += playerScore;
-      teamBCount += 1;
+      generateCombinations(newRemainingPlayers, [...teamA, player], teamB);
     }
-  });
 
-  while (Math.abs(teamACount - teamBCount) > 1) {
-    if (teamACount > teamBCount) {
-      const player = teamA.pop();
-      if (player) {
-        teamB.push(player);
-        teamACount -= 1;
-        teamBCount += 1;
-        teamAScore -= calculatePlayerScore(player);
-        teamBScore += calculatePlayerScore(player);
-      }
-    } else {
-      const player = teamB.pop();
-      if (player) {
-        teamA.push(player);
-        teamBCount -= 1;
-        teamACount += 1;
-        teamBScore -= calculatePlayerScore(player);
-        teamAScore += calculatePlayerScore(player);
-      }
+    if (
+      teamB.length <= teamA.length &&
+      teamB.length < Math.ceil(players.length / 2)
+    ) {
+      generateCombinations(newRemainingPlayers, teamA, [...teamB, player]);
     }
-  }
+  };
 
-  return [teamA, teamB];
+  generateCombinations(sortedPlayers, [], []);
+
+  return [bestTeamA, bestTeamB];
 };

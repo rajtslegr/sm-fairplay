@@ -87,14 +87,44 @@ const PlayerSelection = ({
         />
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button onClick={addNewPlayer} disabled={newPlayerName.trim() === ''}>
-            Add New Player
+            <div className="flex items-center gap-2">
+              <svg
+                className="size-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
+              </svg>
+              Add New Player
+            </div>
           </Button>
           <Button
             onClick={handleSubmit}
             active={listChanged && selectedPlayers.length > 5}
             disabled={selectedPlayers.length < 6}
           >
-            Generate Teams
+            <div className="flex items-center gap-2">
+              <svg
+                className="size-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                />
+              </svg>
+              Generate Teams
+            </div>
           </Button>
           <Button
             onClick={handleReset}
@@ -104,7 +134,22 @@ const PlayerSelection = ({
               teamB.length === 0
             }
           >
-            Reset Selection
+            <div className="flex items-center gap-2">
+              <svg
+                className="size-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              Reset Selection
+            </div>
           </Button>
         </div>
       </div>

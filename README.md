@@ -1,13 +1,13 @@
 # sm-fairplay
 
-STEM/MARK Fair Play is a React application designed to help create balanced soccer teams based on player statistics. It allows users to upload player data from an Excel file, select players for team formation, and automatically generates two balanced teams.
+STEM/MARK Fair Play is a React application designed to help create balanced soccer teams based on player statistics. It allows users to upload player data from an Excel file, select players for team formation, and automatically generates two balanced teams using an optimized algorithm.
 
 ## Features
 
 - Upload player statistics from XLSX files
 - Select players for team formation
 - Add new players on the fly
-- Automatically generate two balanced teams based on player performance
+- Automatically generate two balanced teams using dynamic programming optimization
 - Display team compositions with individual player statistics
 
 ## Getting Started
@@ -38,8 +38,22 @@ STEM/MARK Fair Play is a React application designed to help create balanced socc
 1. Click the "Upload XLSX File" button to upload a file containing player statistics.
 2. Select players for team formation from the list of uploaded players.
 3. Optionally, add new players using the "Add New Player" input field and button.
-4. Click "Generate Teams" to create two balanced teams.
+4. Click "Generate Teams" to create two optimally balanced teams.
 5. View the generated teams and their player statistics.
+
+## Team Generation Algorithm
+
+The application uses an advanced dynamic programming algorithm to create balanced teams:
+
+1. Players are initially sorted by their calculated scores
+2. The algorithm optimizes team assignments to minimize score differences
+3. Teams are kept within one player size difference
+4. Score calculation considers:
+   - Goals per match (weight: 6)
+   - Assists per match (weight: 4)
+   - Points per match (weight: 1)
+
+This approach ensures the most balanced possible teams while maintaining computational efficiency.
 
 ## Running Tests
 

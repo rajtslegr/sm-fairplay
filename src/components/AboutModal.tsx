@@ -85,13 +85,14 @@ const AboutModal = () => {
                 {`PlayerScore = \n  (GoalsPerMatch * GoalWeight) +\n  (AssistsPerMatch * AssistWeight) +\n  (PointsPerMatch * PointWeight)`}
               </pre>
               <p className="text-sm sm:text-base">
-                Teams are then formed by distributing players based on their
-                calculated scores. The algorithm starts with the highest-scoring
-                players and alternates assigning them to teams to ensure
-                balance. This &quot;snake draft&quot; approach (e.g., Team A,
-                Team B, Team B, Team A) helps achieve similar total team scores.
-                The process continues until all players are assigned,
-                maintaining equal team sizes whenever possible.
+                Teams are formed using an advanced dynamic programming algorithm
+                that optimizes for balanced team scores. The process starts by
+                sorting players by their calculated scores, then systematically
+                evaluates different team combinations to find the optimal
+                distribution that minimizes the score difference between teams
+                while maintaining equal team sizes (or at most one player
+                difference). This approach ensures the most competitive and fair
+                team matchups possible.
               </p>
             </div>
           </div>

@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@tanstack/react-router':
-        specifier: 1.81.5
-        version: 1.81.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 1.81.7
+        version: 1.81.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       clsx:
         specifier: 2.1.1
         version: 2.1.1
@@ -807,15 +807,15 @@ packages:
     peerDependencies:
       storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
 
-  '@tanstack/history@1.81.3':
-    resolution: {integrity: sha512-ZNdhkE+Ikv2GPj29m99Bu4qkiH1LeZQkSVjRUbTmNRdvEJmKKrKq1B5p5t1IHlfhoStLu5JIcWeEHHZ88jEfdQ==}
+  '@tanstack/history@1.81.6':
+    resolution: {integrity: sha512-ZbqZszXEU5dyNCjpo9hvXeJKUS+n4wlgpym+b2fIPSwV3yVLC3M34MVK5fmmUcrRFKpBT9vgInMNoL2OZ5U3XQ==}
     engines: {node: '>=12'}
 
-  '@tanstack/react-router@1.81.5':
-    resolution: {integrity: sha512-7DHFOcbLvvH9ZpWeZ7hWOEUjfzKKEpejLcHFrOoimOnsbiDIVGU8+X4eJqjIppvoRSHLSHpRCrt4u8f1feDc9Q==}
+  '@tanstack/react-router@1.81.7':
+    resolution: {integrity: sha512-CRf8xO62xyz98U+pOl1+F6e3cwGbYfrDD61r7osXOW4Y8QCpgPbtmtpzA9gL/MYERGT5dXupdMufqycm6N5Glw==}
     engines: {node: '>=12'}
     peerDependencies:
-      '@tanstack/router-generator': 1.79.0
+      '@tanstack/router-generator': 1.81.6
       react: '>=18'
       react-dom: '>=18'
     peerDependenciesMeta:
@@ -4074,11 +4074,11 @@ snapshots:
     dependencies:
       storybook: 8.4.4(prettier@3.3.3)
 
-  '@tanstack/history@1.81.3': {}
+  '@tanstack/history@1.81.6': {}
 
-  '@tanstack/react-router@1.81.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tanstack/react-router@1.81.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@tanstack/history': 1.81.3
+      '@tanstack/history': 1.81.6
       '@tanstack/react-store': 0.5.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       jsesc: 3.0.2
       react: 18.3.1

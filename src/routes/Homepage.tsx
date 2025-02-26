@@ -4,7 +4,6 @@ import { toast } from 'sonner';
 
 import FileUpload from '@components/FileUpload';
 import PlayerSelection from '@components/PlayerSelection';
-import SoccerBall from '@components/SoccerBall';
 import TeamDisplay from '@components/TeamDisplay';
 import { useStore } from '@store/useStore';
 import { selectTeams, calculatePlayerScore } from '@utils/teamSelection';
@@ -75,7 +74,6 @@ export const Homepage = () => {
 
   return (
     <main className="relative">
-      <SoccerBall />
       <div className="flex min-h-[calc(100vh-6rem)] flex-col items-center justify-start px-4 py-8 sm:min-h-[calc(100vh-4rem)] sm:py-12">
         <FileUpload onFileUpload={handleFileUpload} />
         {players.length > 0 && (

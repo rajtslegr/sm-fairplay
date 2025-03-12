@@ -6,7 +6,8 @@ import FileUpload from '@components/FileUpload';
 import PlayerSelection from '@components/PlayerSelection';
 import TeamDisplay from '@components/TeamDisplay';
 import { useStore } from '@store/useStore';
-import { selectTeams, calculatePlayerScore } from '@utils/teamSelection';
+import { getOnFirePlayer } from '@utils/onFirePlayer';
+import { selectTeams } from '@utils/teamSelection';
 import { parseXlsxData, Player } from '@utils/xlsxParser';
 
 export const Homepage = () => {
@@ -46,12 +47,12 @@ export const Homepage = () => {
       const parsedPlayers = await parseXlsxData(file);
       setPlayers(parsedPlayers);
 
-      const best = parsedPlayers.reduce((prev, current) =>
-        calculatePlayerScore(current) > calculatePlayerScore(prev)
-          ? current
-          : prev,
-      );
-      setBestPlayer(best);
+      if (parsedPlayers.length > 0) {
+        const best = getOnFirePlayer(parsedPlayers);
+        setBestPlayer(best);
+      } else {
+        setBestPlayer(null);
+      }
       toast.success('File processed successfully!');
     } catch (error) {
       console.error('Error parsing XLSX file:', error);

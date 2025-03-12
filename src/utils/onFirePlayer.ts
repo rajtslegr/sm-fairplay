@@ -1,10 +1,11 @@
+import { calculatePlayerScore } from './teamSelection';
 import { Player } from './xlsxParser';
 
 export const getOnFirePlayer = (players: Player[]): Player | null => {
   if (players.length === 0) return null;
 
   return players.reduce((maxPlayer, currentPlayer) =>
-    currentPlayer.pointsPerMatch > maxPlayer.pointsPerMatch
+    calculatePlayerScore(currentPlayer) > calculatePlayerScore(maxPlayer)
       ? currentPlayer
       : maxPlayer,
   );

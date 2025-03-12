@@ -8,28 +8,71 @@ interface PlayerCardProps {
   teamColor: string;
 }
 
-const PlayerCard = ({ player, teamColor }: PlayerCardProps) => (
-  <li
-    key={player.name}
-    className={clsx(
-      'mb-2 overflow-hidden rounded-lg border border-solid border-transparent bg-background-card p-3 text-base font-medium text-gray-50 transition-colors',
-      `hover:border-[${teamColor}]`,
-    )}
-  >
-    <div className="flex items-center justify-between">
-      <span className="text-xl font-bold">{player.name}</span>
-      <span className="text-3xl">
-        {calculatePlayerScore(player).toFixed(2)}
+interface StatItemProps {
+  label: string;
+  value: string;
+  total: number;
+  color: string;
+}
+
+const StatItem = ({ label, value, total, color }: StatItemProps) => (
+  <div className="flex flex-col items-center rounded-md bg-gray-800/50 p-2 text-center">
+    <span className="text-xs text-gray-400">{label}</span>
+    <div className="flex items-baseline gap-1">
+      <span className={clsx('text-lg font-bold', `text-[${color}]`)}>
+        {value}
       </span>
+      <span className="text-xs text-gray-500">/ match</span>
     </div>
-    <div className="mt-2 border-t border-gray-600 pt-2">
-      <div className="text-xs">
-        <p>Goals/Match: {player.goalsPerMatch.toFixed(2)}</p>
-        <p>Assists/Match: {player.assistsPerMatch.toFixed(2)}</p>
-        <p>Points/Match: {player.pointsPerMatch.toFixed(2)}</p>
-      </div>
-    </div>
-  </li>
+    <span className="mt-1 text-xs text-gray-400">Total: {total}</span>
+  </div>
 );
+
+const PlayerCard = ({ player, teamColor }: PlayerCardProps) => {
+  const playerScore = calculatePlayerScore(player);
+
+  return (
+    <li className="relative mb-2 overflow-hidden rounded-lg bg-gradient-to-br from-background-card to-background-card/80 p-4 text-base shadow-md transition-all duration-300">
+      <div
+        className={clsx(
+          'font-mono absolute right-4 top-0 flex size-12 items-center justify-center rounded-bl-lg text-lg font-bold',
+          `bg-[${teamColor}]/90 text-white`,
+        )}
+      >
+        {playerScore.toFixed(2)}
+      </div>
+
+      <div className="mb-3 pr-10">
+        <h3 className="text-xl font-bold text-white">{player.name}</h3>
+      </div>
+
+      <div className="mt-2 grid grid-cols-3 gap-2 border-t border-gray-700 pt-3">
+        <StatItem
+          label="Goals"
+          value={player.goalsPerMatch.toFixed(2)}
+          total={player.goals}
+          color={teamColor}
+        />
+        <StatItem
+          label="Assists"
+          value={player.assistsPerMatch.toFixed(2)}
+          total={player.assists}
+          color={teamColor}
+        />
+        <StatItem
+          label="Points"
+          value={player.pointsPerMatch.toFixed(2)}
+          total={player.points}
+          color={teamColor}
+        />
+      </div>
+
+      <div className="mt-3 flex items-center justify-end text-xs text-gray-400">
+        <span className="mr-1">Matches:</span>
+        <span className="font-medium text-gray-300">{player.matches}</span>
+      </div>
+    </li>
+  );
+};
 
 export default PlayerCard;

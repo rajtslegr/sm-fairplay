@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import clsx from 'clsx';
 
 import { calculatePlayerScore } from '@utils/teamSelection';
@@ -6,6 +8,7 @@ import { Player } from '@utils/xlsxParser';
 interface PlayerCardProps {
   player: Player;
   teamColor: string;
+  assessment?: string;
 }
 
 interface StatItemProps {
@@ -28,8 +31,9 @@ const StatItem = ({ label, value, total, color }: StatItemProps) => (
   </div>
 );
 
-const PlayerCard = ({ player, teamColor }: PlayerCardProps) => {
+const PlayerCard = ({ player, teamColor, assessment }: PlayerCardProps) => {
   const playerScore = calculatePlayerScore(player);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <li className="relative mb-2 overflow-hidden rounded-lg bg-gradient-to-br from-background-card to-background-card/80 p-4 text-base shadow-md transition-all duration-300">
@@ -67,9 +71,63 @@ const PlayerCard = ({ player, teamColor }: PlayerCardProps) => {
         />
       </div>
 
-      <div className="mt-3 flex items-center justify-end text-xs text-gray-400">
-        <span className="mr-1">Matches:</span>
-        <span className="font-medium text-gray-300">{player.matches}</span>
+      <div className="mt-3 flex items-center justify-between text-xs">
+        <span className="text-gray-400">
+          <span className="mr-1">Matches:</span>
+          <span className="font-medium text-gray-300">{player.matches}</span>
+        </span>
+      </div>
+
+      {/* Assessment section with fixed height */}
+      <div className="mt-3 h-[60px] border-t border-gray-700 pt-3">
+        {assessment ? (
+          <div className="flex items-start gap-1.5">
+            <svg
+              className="mt-0.5 size-5 shrink-0 text-blue-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <div className="relative flex-1">
+              <p
+                className={clsx(
+                  'cursor-pointer text-sm italic text-gray-400',
+                  isExpanded ? '' : 'line-clamp-2',
+                )}
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
+                {assessment}
+              </p>
+              {!isExpanded && assessment.length > 80 && (
+                <button
+                  className="absolute bottom-0 right-0 bg-background-card px-1 text-xs text-blue-400"
+                  onClick={() => setIsExpanded(true)}
+                >
+                  more
+                </button>
+              )}
+              {isExpanded && (
+                <button
+                  className="mt-1 text-xs text-blue-400"
+                  onClick={() => setIsExpanded(false)}
+                >
+                  show less
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="text-xs italic text-gray-500">
+            No AI assessment available
+          </div>
+        )}
       </div>
     </li>
   );

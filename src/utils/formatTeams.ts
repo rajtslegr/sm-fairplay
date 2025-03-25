@@ -6,6 +6,8 @@ export const formatTeamsForEmail = (
   teamB: Player[],
   teamAScore: number,
   teamBScore: number,
+  teamExplanation?: string,
+  playerAssessments?: Record<string, string>,
 ): string => {
   const formatPlayerStats = (player: Player): string => {
     const stats = [
@@ -14,7 +16,14 @@ export const formatTeamsForEmail = (
       `Assists: ${player.assistsPerMatch.toFixed(2)}`,
       `Points: ${player.pointsPerMatch.toFixed(2)}`,
     ];
-    return stats.join(' | ');
+
+    let formattedStats = stats.join(' | ');
+
+    if (playerAssessments && playerAssessments[player.name]) {
+      formattedStats += `\n  Assessment: ${playerAssessments[player.name]}`;
+    }
+
+    return formattedStats;
   };
 
   const formatTeam = (players: Player[]): string =>
@@ -22,7 +31,15 @@ export const formatTeamsForEmail = (
       .map((player) => `• ${player.name}\n  ${formatPlayerStats(player)}`)
       .join('\n\n');
 
-  return `🟢 Total Score: ${teamAScore.toFixed(2)}\n\n${formatTeam(
+  let output = '';
+
+  if (teamExplanation) {
+    output += `🤖 AI TEAM SELECTION STRATEGY 🤖\n${teamExplanation}\n\n`;
+  }
+
+  output += `🟢 Total Score: ${teamAScore.toFixed(2)}\n\n${formatTeam(
     teamA,
   )}\n\n🔴 Total Score: ${teamBScore.toFixed(2)}\n\n${formatTeam(teamB)}`;
+
+  return output;
 };

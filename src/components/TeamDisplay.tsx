@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 
 import Button from './Button';
 import PlayerCard from './PlayerCard';
+import { useStore } from '@store/useStore';
 import { formatTeamsForEmail } from '@utils/formatTeams';
 import { getRandomQuote } from '@utils/onFirePlayer';
 import { calculateTeamScore } from '@utils/teamSelection';
@@ -16,6 +17,8 @@ interface TeamDisplayProps {
 }
 
 const TeamDisplay = ({ teamA, teamB, bestPlayer }: TeamDisplayProps) => {
+  const { teamExplanation, playerAssessments } = useStore();
+
   const [teamAScore, teamBScore] = useMemo(
     () => [calculateTeamScore(teamA), calculateTeamScore(teamB)],
     [teamA, teamB],
@@ -34,6 +37,8 @@ const TeamDisplay = ({ teamA, teamB, bestPlayer }: TeamDisplayProps) => {
       teamB,
       teamAScore,
       teamBScore,
+      teamExplanation,
+      playerAssessments,
     );
 
     try {
@@ -54,6 +59,12 @@ const TeamDisplay = ({ teamA, teamB, bestPlayer }: TeamDisplayProps) => {
           </p>
         </div>
       )}
+      {teamExplanation && (
+        <div className="mb-6 rounded-lg bg-gradient-to-r from-indigo-900 to-blue-800 p-4 text-white shadow-md">
+          <h3 className="mb-2 text-lg font-bold">AI Team Selection Strategy</h3>
+          <p className="text-sm">{teamExplanation}</p>
+        </div>
+      )}
       {teamA.length > 0 && teamB.length > 0 && (
         <>
           <div className="flex flex-col gap-4 sm:flex-row">
@@ -67,6 +78,7 @@ const TeamDisplay = ({ teamA, teamB, bestPlayer }: TeamDisplayProps) => {
                     key={player.name}
                     player={player}
                     teamColor="#689820"
+                    assessment={playerAssessments[player.name]}
                   />
                 ))}
               </ul>
@@ -81,6 +93,7 @@ const TeamDisplay = ({ teamA, teamB, bestPlayer }: TeamDisplayProps) => {
                     key={player.name}
                     player={player}
                     teamColor="#982020"
+                    assessment={playerAssessments[player.name]}
                   />
                 ))}
               </ul>

@@ -1,12 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { toast } from 'sonner';
 
+import ApiKeyModal from '@components/ApiKeyModal';
 import FileUpload from '@components/FileUpload';
 import PlayerSelection from '@components/PlayerSelection';
 import TeamDisplay from '@components/TeamDisplay';
 import { useStore } from '@store/useStore';
 import { getOnFirePlayer } from '@utils/onFirePlayer';
+import { selectTeamsWithAI } from '@utils/openAITeamSelection';
 import { selectTeams } from '@utils/teamSelection';
 import { parseXlsxData, Player } from '@utils/xlsxParser';
 
@@ -21,8 +23,15 @@ export const Homepage = () => {
     setBestPlayer,
     reset,
     resetSelection,
+    getOpenAIKey,
+    isOpenAIKeyValid,
   } = useStore();
 
+  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
+  const [pendingSelectedPlayers, setPendingSelectedPlayers] = useState<
+    Player[]
+  >([]);
+  const [isGenerating, setIsGenerating] = useState(false);
   const teamDisplayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -73,6 +82,76 @@ export const Homepage = () => {
     }
   };
 
+  const generateTeamsWithAI = async (
+    selectedPlayers: Player[],
+    apiKey: string,
+  ) => {
+    if (isGenerating) {
+      toast.error('Team generation already in progress');
+      return;
+    }
+
+    setIsGenerating(true);
+    const toastId = toast.loading(
+      'AI is generating teams and creating player assessments...',
+    );
+
+    try {
+      if (!apiKey || apiKey.trim() === '') {
+        toast.error('OpenAI API key is missing or invalid.');
+        toast.dismiss(toastId);
+        setIsGenerating(false);
+        return;
+      }
+
+      const result = await selectTeamsWithAI(selectedPlayers, apiKey);
+
+      if (result.teamA.length === 0 || result.teamB.length === 0) {
+        throw new Error('AI failed to generate valid teams');
+      }
+
+      setTeams(
+        result.teamA,
+        result.teamB,
+        result.teamExplanation,
+        result.playerAssessments,
+      );
+
+      toast.success('AI teams and player assessments generated successfully!');
+    } catch (error) {
+      console.error('Error generating teams with AI:', error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error('Error generating teams with AI. Please try again.');
+      }
+    } finally {
+      toast.dismiss(toastId);
+      setIsGenerating(false);
+    }
+  };
+
+  const handlePlayersSelectedWithAI = (selectedPlayers: Player[]) => {
+    if (!isOpenAIKeyValid()) {
+      setPendingSelectedPlayers(selectedPlayers);
+      setIsApiKeyModalOpen(true);
+    } else {
+      const apiKey = getOpenAIKey();
+      generateTeamsWithAI(selectedPlayers, apiKey);
+    }
+  };
+
+  const handleApiKeySuccess = (savedApiKey: string) => {
+    setIsApiKeyModalOpen(false);
+
+    if (pendingSelectedPlayers.length > 0 && savedApiKey) {
+      setTimeout(() => {
+        generateTeamsWithAI(pendingSelectedPlayers, savedApiKey);
+        setPendingSelectedPlayers([]);
+      }, 100);
+    }
+  };
+
   return (
     <main className="relative">
       <div className="flex min-h-[calc(100vh-6rem)] flex-col items-center justify-start px-4 py-8 sm:min-h-[calc(100vh-4rem)] sm:py-12">
@@ -81,13 +160,21 @@ export const Homepage = () => {
           <PlayerSelection
             players={players}
             onPlayersSelected={handlePlayersSelected}
+            onPlayersSelectedWithAI={handlePlayersSelectedWithAI}
             onResetSelection={resetSelection}
+            isGenerating={isGenerating}
           />
         )}
         <div ref={teamDisplayRef} className="w-full max-w-4xl">
           <TeamDisplay teamA={teamA} teamB={teamB} bestPlayer={bestPlayer} />
         </div>
       </div>
+
+      <ApiKeyModal
+        isOpen={isApiKeyModalOpen}
+        onClose={() => setIsApiKeyModalOpen(false)}
+        onSuccess={handleApiKeySuccess}
+      />
     </main>
   );
 };

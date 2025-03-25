@@ -23,6 +23,7 @@
   "dependencies": {
     "@tanstack/react-router": "1.114.27",
     "clsx": "2.1.1",
+    "openai": "^4.89.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "recharts": "2.15.1",

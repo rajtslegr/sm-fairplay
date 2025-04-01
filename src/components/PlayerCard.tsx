@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import clsx from 'clsx';
 
 import { calculatePlayerScore } from '@utils/teamSelection';
@@ -33,7 +31,6 @@ const StatItem = ({ label, value, total, color }: StatItemProps) => (
 
 const PlayerCard = ({ player, teamColor, assessment }: PlayerCardProps) => {
   const playerScore = calculatePlayerScore(player);
-  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <li className="relative mb-2 overflow-hidden rounded-lg bg-gradient-to-br from-background-card to-background-card/80 p-4 text-base shadow-md transition-all duration-300">
@@ -78,8 +75,7 @@ const PlayerCard = ({ player, teamColor, assessment }: PlayerCardProps) => {
         </span>
       </div>
 
-      {/* Assessment section with fixed height */}
-      <div className="mt-3 h-[60px] border-t border-gray-700 pt-3">
+      <div className="mt-3 h-44 border-t border-gray-700 pt-3">
         {assessment ? (
           <div className="flex items-start gap-1.5">
             <svg
@@ -96,31 +92,9 @@ const PlayerCard = ({ player, teamColor, assessment }: PlayerCardProps) => {
               />
             </svg>
             <div className="relative flex-1">
-              <p
-                className={clsx(
-                  'cursor-pointer text-sm italic text-gray-400',
-                  isExpanded ? '' : 'line-clamp-2',
-                )}
-                onClick={() => setIsExpanded(!isExpanded)}
-              >
+              <p className="cursor-pointer text-sm italic text-gray-400">
                 {assessment}
               </p>
-              {!isExpanded && assessment.length > 80 && (
-                <button
-                  className="absolute bottom-0 right-0 bg-background-card px-1 text-xs text-blue-400"
-                  onClick={() => setIsExpanded(true)}
-                >
-                  more
-                </button>
-              )}
-              {isExpanded && (
-                <button
-                  className="mt-1 text-xs text-blue-400"
-                  onClick={() => setIsExpanded(false)}
-                >
-                  show less
-                </button>
-              )}
             </div>
           </div>
         ) : (

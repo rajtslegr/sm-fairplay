@@ -7,7 +7,6 @@ import FileUpload from '@components/FileUpload';
 import PlayerSelection from '@components/PlayerSelection';
 import TeamDisplay from '@components/TeamDisplay';
 import { useStore } from '@store/useStore';
-import { getOnFirePlayer } from '@utils/onFirePlayer';
 import { selectTeamsWithAI } from '@utils/openAITeamSelection';
 import { selectTeams } from '@utils/teamSelection';
 import { parseXlsxData, Player } from '@utils/xlsxParser';
@@ -17,16 +16,15 @@ export const Homepage = () => {
     players,
     teamA,
     teamB,
-    bestPlayer,
     setPlayers,
     setTeams,
-    setBestPlayer,
     reset,
     resetSelection,
-    getOpenAIKey,
-    isOpenAIKeyValid,
+    setMatchHistory,
+    matchHistory,
   } = useStore();
 
+  const [apiKey, setApiKey] = useState('');
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
   const [pendingSelectedPlayers, setPendingSelectedPlayers] = useState<
     Player[]
@@ -53,15 +51,10 @@ export const Homepage = () => {
     const toastId = toast.loading('Processing file...');
 
     try {
-      const parsedPlayers = await parseXlsxData(file);
+      const { players: parsedPlayers, matches } = await parseXlsxData(file);
       setPlayers(parsedPlayers);
+      setMatchHistory(matches);
 
-      if (parsedPlayers.length > 0) {
-        const best = getOnFirePlayer(parsedPlayers);
-        setBestPlayer(best);
-      } else {
-        setBestPlayer(null);
-      }
       toast.success('File processed successfully!');
     } catch (error) {
       console.error('Error parsing XLSX file:', error);
@@ -84,7 +77,7 @@ export const Homepage = () => {
 
   const generateTeamsWithAI = async (
     selectedPlayers: Player[],
-    apiKey: string,
+    key: string,
   ) => {
     if (isGenerating) {
       toast.error('Team generation already in progress');
@@ -97,14 +90,18 @@ export const Homepage = () => {
     );
 
     try {
-      if (!apiKey || apiKey.trim() === '') {
+      if (!key || key.trim() === '') {
         toast.error('OpenAI API key is missing or invalid.');
         toast.dismiss(toastId);
         setIsGenerating(false);
         return;
       }
 
-      const result = await selectTeamsWithAI(selectedPlayers, apiKey);
+      const result = await selectTeamsWithAI(
+        selectedPlayers,
+        key,
+        matchHistory,
+      );
 
       if (result.teamA.length === 0 || result.teamB.length === 0) {
         throw new Error('AI failed to generate valid teams');
@@ -132,17 +129,13 @@ export const Homepage = () => {
   };
 
   const handlePlayersSelectedWithAI = (selectedPlayers: Player[]) => {
-    if (!isOpenAIKeyValid()) {
-      setPendingSelectedPlayers(selectedPlayers);
-      setIsApiKeyModalOpen(true);
-    } else {
-      const apiKey = getOpenAIKey();
-      generateTeamsWithAI(selectedPlayers, apiKey);
-    }
+    setPendingSelectedPlayers(selectedPlayers);
+    setIsApiKeyModalOpen(true);
   };
 
   const handleApiKeySuccess = (savedApiKey: string) => {
     setIsApiKeyModalOpen(false);
+    setApiKey(savedApiKey);
 
     if (pendingSelectedPlayers.length > 0 && savedApiKey) {
       setTimeout(() => {
@@ -163,10 +156,11 @@ export const Homepage = () => {
             onPlayersSelectedWithAI={handlePlayersSelectedWithAI}
             onResetSelection={resetSelection}
             isGenerating={isGenerating}
+            hasApiKey={!!apiKey}
           />
         )}
         <div ref={teamDisplayRef} className="w-full max-w-4xl">
-          <TeamDisplay teamA={teamA} teamB={teamB} bestPlayer={bestPlayer} />
+          <TeamDisplay teamA={teamA} teamB={teamB} />
         </div>
       </div>
 
@@ -174,6 +168,7 @@ export const Homepage = () => {
         isOpen={isApiKeyModalOpen}
         onClose={() => setIsApiKeyModalOpen(false)}
         onSuccess={handleApiKeySuccess}
+        initialApiKey={apiKey}
       />
     </main>
   );

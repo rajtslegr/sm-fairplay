@@ -3,26 +3,27 @@ import { useRef, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import Button from '@components/Button';
-import { useStore } from '@store/useStore';
-import { API_KEY_EXPIRY_MS } from '@utils/encryption';
 
 interface ApiKeyModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (apiKey: string) => void;
+  initialApiKey?: string;
 }
 
-const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
+const ApiKeyModal = ({
+  isOpen,
+  onClose,
+  onSuccess,
+  initialApiKey = '',
+}: ApiKeyModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const { getOpenAIKey, setOpenAIKey } = useStore();
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
 
-  const expiryHours = Math.floor(API_KEY_EXPIRY_MS / (60 * 60 * 1000));
-
   useEffect(() => {
-    setApiKey(getOpenAIKey() || '');
-  }, [getOpenAIKey, isOpen]);
+    setApiKey(initialApiKey || '');
+  }, [initialApiKey, isOpen]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -43,7 +44,7 @@ const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
     };
   }, [isOpen, onClose]);
 
-  const handleSave = () => {
+  const handleSubmit = () => {
     if (apiKey.trim()) {
       const trimmedKey = apiKey.trim();
 
@@ -52,10 +53,7 @@ const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
         return;
       }
 
-      setOpenAIKey(trimmedKey);
-      toast.success(
-        `API key saved! It will expire after ${expiryHours} hours.`,
-      );
+      toast.success('API key applied for this session');
       onSuccess(trimmedKey);
     } else {
       toast.error('Please enter a valid API key');
@@ -82,7 +80,7 @@ const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
 
           <div className="mb-4 rounded-md border border-amber-400 bg-amber-900/30 p-3">
             <h3 className="mb-1 font-medium text-amber-400">
-              ⚠️ Security Warning
+              ⚠️ Security Info
             </h3>
             <ul className="list-disc pl-5 text-sm text-amber-200">
               <li className="mb-1">
@@ -90,8 +88,7 @@ const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
                 in your OpenAI dashboard
               </li>
               <li className="mb-1">
-                Your key will be stored encrypted in your browser and will
-                expire after {expiryHours} hours
+                Your key is used only for the current session
               </li>
               <li>
                 For maximum security, delete your API key from OpenAI dashboard
@@ -101,8 +98,8 @@ const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
           </div>
 
           <p className="mb-4 text-sm text-gray-300">
-            Your key is stored locally in your browser and is never sent to our
-            servers. You can get an API key from{' '}
+            Your key is only used for the current request and is never stored or
+            saved. You can get an API key from{' '}
             <a
               href="https://platform.openai.com/api-keys"
               target="_blank"
@@ -133,8 +130,8 @@ const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
           </div>
           <div className="flex justify-end space-x-2">
             <Button onClick={onClose}>Cancel</Button>
-            <Button onClick={handleSave} active>
-              Save & Continue
+            <Button onClick={handleSubmit} active>
+              Apply & Continue
             </Button>
           </div>
         </div>

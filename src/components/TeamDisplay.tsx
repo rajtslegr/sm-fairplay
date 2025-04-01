@@ -6,30 +6,21 @@ import Button from './Button';
 import PlayerCard from './PlayerCard';
 import { useStore } from '@store/useStore';
 import { formatTeamsForEmail } from '@utils/formatTeams';
-import { getRandomQuote } from '@utils/onFirePlayer';
 import { calculateTeamScore } from '@utils/teamSelection';
 import { Player } from '@utils/xlsxParser';
 
 interface TeamDisplayProps {
   teamA: Player[];
   teamB: Player[];
-  bestPlayer: Player | null;
 }
 
-const TeamDisplay = ({ teamA, teamB, bestPlayer }: TeamDisplayProps) => {
+const TeamDisplay = ({ teamA, teamB }: TeamDisplayProps) => {
   const { teamExplanation, playerAssessments } = useStore();
 
   const [teamAScore, teamBScore] = useMemo(
     () => [calculateTeamScore(teamA), calculateTeamScore(teamB)],
     [teamA, teamB],
   );
-
-  const onFireQuote = useMemo(() => getRandomQuote(), []);
-
-  const switchNameOrder = (name: string) => {
-    const nameParts = name.split(' ');
-    return `${nameParts.pop()} ${nameParts.join(' ')}`.trim();
-  };
 
   const handleCopyToClipboard = async () => {
     const formattedTeams = formatTeamsForEmail(
@@ -52,16 +43,8 @@ const TeamDisplay = ({ teamA, teamB, bestPlayer }: TeamDisplayProps) => {
 
   return (
     <div className="w-full max-w-4xl">
-      {bestPlayer && (
-        <div className="mb-6 rounded-lg bg-gradient-to-r from-yellow-400 to-orange-500 p-4 text-center text-black shadow-md">
-          <p className="text-lg font-bold">
-            🔥 {switchNameOrder(bestPlayer.name)} {onFireQuote} 🔥
-          </p>
-        </div>
-      )}
       {teamExplanation && (
         <div className="mb-6 rounded-lg bg-gradient-to-r from-indigo-900 to-blue-800 p-4 text-white shadow-md">
-          <h3 className="mb-2 text-lg font-bold">AI Team Selection Strategy</h3>
           <p className="text-sm">{teamExplanation}</p>
         </div>
       )}

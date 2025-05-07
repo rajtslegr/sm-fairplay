@@ -31,7 +31,7 @@ export const selectTeamsWithAI = async (
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'o3-mini',
+      model: 'o4-mini',
       response_format: { type: 'json_object' },
       messages: [
         {

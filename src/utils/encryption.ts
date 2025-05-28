@@ -32,15 +32,3 @@ export const decryptApiKey = (encryptedKey: string): string => {
     return '';
   }
 };
-
-export const isApiKeyExpired = (
-  timestamp: number,
-  expiryTimeMs: number,
-): boolean => {
-  if (!timestamp) return true;
-
-  const now = Date.now();
-  return now - timestamp > expiryTimeMs;
-};
-
-export const API_KEY_EXPIRY_MS = 2 * 60 * 60 * 1000;

@@ -10,7 +10,6 @@ interface PlayerSelectionProps {
   onPlayersSelectedWithAI: (selectedPlayers: Player[]) => void;
   onResetSelection: () => void;
   isGenerating?: boolean;
-  hasApiKey?: boolean;
 }
 
 const PlayerSelection = ({
@@ -18,7 +17,6 @@ const PlayerSelection = ({
   onPlayersSelectedWithAI,
   onResetSelection,
   isGenerating = false,
-  hasApiKey = false,
 }: PlayerSelectionProps) => {
   const {
     selectedPlayers,
@@ -27,6 +25,7 @@ const PlayerSelection = ({
     setAllPlayers,
     teamA,
     teamB,
+    getOpenAIKey,
   } = useStore();
   const [newPlayerName, setNewPlayerName] = useState('');
   const [listChanged, setListChanged] = useState(false);
@@ -194,7 +193,7 @@ const PlayerSelection = ({
               <div className="absolute bottom-full left-0 mb-2 w-64 rounded bg-gray-800 p-2 text-xs text-gray-200 shadow-lg">
                 Uses OpenAI to analyze all player statistics and create
                 optimally balanced teams.
-                {!hasApiKey && " You'll be prompted to enter an API key."}
+                {!getOpenAIKey() && " You'll be prompted to enter an API key."}
               </div>
             )}
           </div>

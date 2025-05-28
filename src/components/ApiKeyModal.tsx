@@ -3,27 +3,23 @@ import { useRef, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import Button from '@components/Button';
+import { useStore } from '@store/useStore';
 
 interface ApiKeyModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (apiKey: string) => void;
-  initialApiKey?: string;
 }
 
-const ApiKeyModal = ({
-  isOpen,
-  onClose,
-  onSuccess,
-  initialApiKey = '',
-}: ApiKeyModalProps) => {
+const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const { getOpenAIKey, setOpenAIKey } = useStore();
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
 
   useEffect(() => {
-    setApiKey(initialApiKey || '');
-  }, [initialApiKey, isOpen]);
+    setApiKey(getOpenAIKey() || '');
+  }, [getOpenAIKey, isOpen]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -44,7 +40,7 @@ const ApiKeyModal = ({
     };
   }, [isOpen, onClose]);
 
-  const handleSubmit = () => {
+  const handleSave = () => {
     if (apiKey.trim()) {
       const trimmedKey = apiKey.trim();
 
@@ -53,7 +49,8 @@ const ApiKeyModal = ({
         return;
       }
 
-      toast.success('API key applied for this session');
+      setOpenAIKey(trimmedKey);
+      toast.success('API key saved!');
       onSuccess(trimmedKey);
     } else {
       toast.error('Please enter a valid API key');
@@ -80,7 +77,7 @@ const ApiKeyModal = ({
 
           <div className="mb-4 rounded-md border border-amber-400 bg-amber-900/30 p-3">
             <h3 className="mb-1 font-medium text-amber-400">
-              ⚠️ Security Info
+              ⚠️ Security Warning
             </h3>
             <ul className="list-disc pl-5 text-sm text-amber-200">
               <li className="mb-1">
@@ -88,18 +85,14 @@ const ApiKeyModal = ({
                 in your OpenAI dashboard
               </li>
               <li className="mb-1">
-                Your key is used only for the current session
-              </li>
-              <li>
-                For maximum security, delete your API key from OpenAI dashboard
-                after use
+                Your key will be stored encrypted in your browser
               </li>
             </ul>
           </div>
 
           <p className="mb-4 text-sm text-gray-300">
-            Your key is only used for the current request and is never stored or
-            saved. You can get an API key from{' '}
+            Your key is stored locally in your browser and is never sent to our
+            servers. You can get an API key from{' '}
             <a
               href="https://platform.openai.com/api-keys"
               target="_blank"
@@ -130,8 +123,8 @@ const ApiKeyModal = ({
           </div>
           <div className="flex justify-end space-x-2">
             <Button onClick={onClose}>Cancel</Button>
-            <Button onClick={handleSubmit} active>
-              Apply & Continue
+            <Button onClick={handleSave} active>
+              Save & Continue
             </Button>
           </div>
         </div>

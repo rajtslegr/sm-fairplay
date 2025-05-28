@@ -20,11 +20,12 @@ export const Homepage = () => {
     setTeams,
     reset,
     resetSelection,
+    getOpenAIKey,
+    isOpenAIKeyValid,
     setMatchHistory,
     matchHistory,
   } = useStore();
 
-  const [apiKey, setApiKey] = useState('');
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
   const [pendingSelectedPlayers, setPendingSelectedPlayers] = useState<
     Player[]
@@ -77,7 +78,7 @@ export const Homepage = () => {
 
   const generateTeamsWithAI = async (
     selectedPlayers: Player[],
-    key: string,
+    apiKey: string,
   ) => {
     if (isGenerating) {
       toast.error('Team generation already in progress');
@@ -90,7 +91,7 @@ export const Homepage = () => {
     );
 
     try {
-      if (!key || key.trim() === '') {
+      if (!apiKey || apiKey.trim() === '') {
         toast.error('OpenAI API key is missing or invalid.');
         toast.dismiss(toastId);
         setIsGenerating(false);
@@ -99,7 +100,7 @@ export const Homepage = () => {
 
       const result = await selectTeamsWithAI(
         selectedPlayers,
-        key,
+        apiKey,
         matchHistory,
       );
 
@@ -129,13 +130,17 @@ export const Homepage = () => {
   };
 
   const handlePlayersSelectedWithAI = (selectedPlayers: Player[]) => {
-    setPendingSelectedPlayers(selectedPlayers);
-    setIsApiKeyModalOpen(true);
+    if (!isOpenAIKeyValid()) {
+      setPendingSelectedPlayers(selectedPlayers);
+      setIsApiKeyModalOpen(true);
+    } else {
+      const apiKey = getOpenAIKey();
+      generateTeamsWithAI(selectedPlayers, apiKey);
+    }
   };
 
   const handleApiKeySuccess = (savedApiKey: string) => {
     setIsApiKeyModalOpen(false);
-    setApiKey(savedApiKey);
 
     if (pendingSelectedPlayers.length > 0 && savedApiKey) {
       setTimeout(() => {
@@ -156,7 +161,6 @@ export const Homepage = () => {
             onPlayersSelectedWithAI={handlePlayersSelectedWithAI}
             onResetSelection={resetSelection}
             isGenerating={isGenerating}
-            hasApiKey={!!apiKey}
           />
         )}
         <div ref={teamDisplayRef} className="w-full max-w-4xl">
@@ -168,7 +172,6 @@ export const Homepage = () => {
         isOpen={isApiKeyModalOpen}
         onClose={() => setIsApiKeyModalOpen(false)}
         onSuccess={handleApiKeySuccess}
-        initialApiKey={apiKey}
       />
     </main>
   );

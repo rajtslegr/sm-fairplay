@@ -1,6 +1,7 @@
 import { create, StateCreator } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { decryptApiKey, encryptApiKey, StoredApiKey } from '@utils/encryption';
 import { Match, Player } from '@utils/xlsxParser';
 
 interface AppState {
@@ -11,6 +12,7 @@ interface AppState {
   selectedPlayers: Player[];
   allPlayers: Player[];
   matchHistory: Match[];
+  encryptedApiKey: StoredApiKey;
   teamExplanation: string;
   playerAssessments: Record<string, string>;
   setPlayers: (players: Player[]) => void;
@@ -24,13 +26,16 @@ interface AppState {
   setShowAbout: (show: boolean) => void;
   setSelectedPlayers: (players: Player[]) => void;
   setAllPlayers: (players: Player[]) => void;
+  setOpenAIKey: (key: string) => void;
+  getOpenAIKey: () => string;
+  isOpenAIKeyValid: () => boolean;
   reset: () => void;
   resetSelection: () => void;
 }
 
 export const useStore = create(
   persist<AppState>(
-    (set) => ({
+    (set, get) => ({
       players: [],
       teamA: [],
       teamB: [],
@@ -38,6 +43,7 @@ export const useStore = create(
       selectedPlayers: [],
       allPlayers: [],
       matchHistory: [],
+      encryptedApiKey: { key: '', timestamp: 0 },
       teamExplanation: '',
       playerAssessments: {},
       setPlayers: (players) => set({ players, allPlayers: players }),
@@ -47,6 +53,24 @@ export const useStore = create(
       setShowAbout: (showAbout) => set({ showAbout }),
       setSelectedPlayers: (selectedPlayers) => set({ selectedPlayers }),
       setAllPlayers: (allPlayers) => set({ allPlayers }),
+      setOpenAIKey: (key) =>
+        set({
+          encryptedApiKey: {
+            key: encryptApiKey(key),
+            timestamp: Date.now(),
+          },
+        }),
+      getOpenAIKey: () => {
+        const { encryptedApiKey } = get();
+        if (!encryptedApiKey.key) {
+          return '';
+        }
+        return decryptApiKey(encryptedApiKey.key);
+      },
+      isOpenAIKeyValid: () => {
+        const { encryptedApiKey } = get();
+        return !!encryptedApiKey.key;
+      },
       reset: () =>
         set({
           teamA: [],
@@ -77,6 +101,7 @@ export const useStore = create(
           teamA: state.teamA,
           teamB: state.teamB,
           matchHistory: state.matchHistory,
+          encryptedApiKey: state.encryptedApiKey,
           teamExplanation: state.teamExplanation,
           playerAssessments: state.playerAssessments,
         }) as AppState,

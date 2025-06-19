@@ -21,7 +21,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@tanstack/react-router": "1.121.24",
+    "@tanstack/react-router": "1.121.27",
     "clsx": "2.1.1",
     "openai": "^5.0.0",
     "react": "19.1.0",

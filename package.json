@@ -29,7 +29,7 @@
     "recharts": "2.15.4",
     "sonner": "2.0.5",
     "xlsx": "0.18.5",
-    "zustand": "5.0.5"
+    "zustand": "5.0.6"
   },
   "devDependencies": {
     "@playwright/test": "1.53.1",

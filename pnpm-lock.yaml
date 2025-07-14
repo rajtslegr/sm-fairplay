@@ -136,8 +136,8 @@ importers:
         specifier: 3.18.0
         version: 3.18.0(tailwindcss@3.4.17)
       eslint-plugin-testing-library:
-        specifier: 7.5.4
-        version: 7.5.4(eslint@8.57.1)(typescript@5.8.3)
+        specifier: 7.6.0
+        version: 7.6.0(eslint@8.57.1)(typescript@5.8.3)
       eslint-plugin-unused-imports:
         specifier: 4.1.4
         version: 4.1.4(@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.8.3))(eslint@8.57.1)(typescript@5.8.3))(eslint@8.57.1)
@@ -1989,8 +1989,8 @@ packages:
     peerDependencies:
       tailwindcss: ^3.4.0
 
-  eslint-plugin-testing-library@7.5.4:
-    resolution: {integrity: sha512-WDID5wR2MDK6u4QvmAZOjBzaMq7MvEQTpeRAyWuI2kmpBnIKS00/EklRv/5096W5AnpF9XrXPY6PtRPflbvrBw==}
+  eslint-plugin-testing-library@7.6.0:
+    resolution: {integrity: sha512-rxCz4VQFb45kDeFLnQcjGpeb72r4HmCh6v49d+DhrD2HVpnJuwK/GOnPjezWS7CytkNjQjpXcPopxLN++FlXxw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0, pnpm: ^9.14.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
@@ -6010,7 +6010,7 @@ snapshots:
       postcss: 8.5.6
       tailwindcss: 3.4.17
 
-  eslint-plugin-testing-library@7.5.4(eslint@8.57.1)(typescript@5.8.3):
+  eslint-plugin-testing-library@7.6.0(eslint@8.57.1)(typescript@5.8.3):
     dependencies:
       '@typescript-eslint/scope-manager': 8.15.0
       '@typescript-eslint/utils': 8.15.0(eslint@8.57.1)(typescript@5.8.3)

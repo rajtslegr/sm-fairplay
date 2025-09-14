@@ -16,7 +16,7 @@ importers:
         version: 2.1.1
       openai:
         specifier: ^5.0.0
-        version: 5.20.1(ws@8.18.0)
+        version: 5.20.2(ws@8.18.0)
       react:
         specifier: 19.1.1
         version: 19.1.1
@@ -2630,8 +2630,8 @@ packages:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
 
-  openai@5.20.1:
-    resolution: {integrity: sha512-UndCB0R5V3iB9I98NyF69zNP6YfwU4+Fjk0eW4HhooTm+Awlpm/MGjJTwJsyNV/qkH1NJi0GG+9odwukGTqExQ==}
+  openai@5.20.2:
+    resolution: {integrity: sha512-ZeBIEazj6W/XOulMw92L8iU5FblQeM5IxjPRCZNVArNXsoF+bLPnS7B2X4O0JSmpCM+F5Gdajr6bn4nAUj4LFQ==}
     hasBin: true
     peerDependencies:
       ws: ^8.18.0
@@ -6401,7 +6401,7 @@ snapshots:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
-  openai@5.20.1(ws@8.18.0):
+  openai@5.20.2(ws@8.18.0):
     optionalDependencies:
       ws: 8.18.0
 

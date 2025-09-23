@@ -32,7 +32,7 @@
     "zustand": "5.0.8"
   },
   "devDependencies": {
-    "@playwright/test": "1.55.0",
+    "@playwright/test": "1.55.1",
     "@storybook/addon-links": "9.1.7",
     "@storybook/addon-onboarding": "9.1.7",
     "@storybook/react-vite": "9.1.7",

@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@tanstack/react-router':
-        specifier: 1.132.19
-        version: 1.132.19(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        specifier: 1.132.23
+        version: 1.132.23(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       clsx:
         specifier: 2.1.1
         version: 2.1.1
@@ -805,12 +805,12 @@ packages:
     resolution: {integrity: sha512-L8sXFJUHmrlyU2BsWWZGuAjv39Jl1uAqUHdxmN42JY15M4+XCMjGlArdCCjDe1wpTSW6USYISA9axjZojgtvnw==}
     deprecated: In Storybook 8, this package functionality has been integrated to a new package called @storybook/test, which uses Vitest APIs for an improved experience. When upgrading to Storybook 8 with 'npx storybook@latest upgrade', you will get prompted and will get an automigration for the new package. Please migrate when you can.
 
-  '@tanstack/history@1.132.0':
-    resolution: {integrity: sha512-GG2R9I6QSlbNR9fEuX2sQCigY6K28w51h2634TWmkaHXlzQw+rWuIWr4nAGM9doA+kWRi1LFSFMvAiG3cOqjXQ==}
+  '@tanstack/history@1.132.21':
+    resolution: {integrity: sha512-5ziPz3YarKU5cBJoEJ4muV8cy+5W4oWdJMqW7qosMrK5fb9Qfm+QWX+kO3emKJMu4YOUofVu3toEuuD3x1zXKw==}
     engines: {node: '>=12'}
 
-  '@tanstack/react-router@1.132.19':
-    resolution: {integrity: sha512-6Vuiczv0MIQ1wGnjfy4HfQsbJXKn33bUu/IRfV8qcvadQ2lsrV5QWTr+c6Q4ET8JWY83tkFY0AcORgxR4kXrUQ==}
+  '@tanstack/react-router@1.132.23':
+    resolution: {integrity: sha512-k/ffpPwWWUyPp4FS7EJR2zIWWdU7XvQwlI2eK+NQOCXNX8SA+Kyy73rAedOb0JUFAuGPF36ySP15IH7mzTB+Xg==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=18.0.0 || >=19.0.0'
@@ -822,8 +822,8 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  '@tanstack/router-core@1.132.19':
-    resolution: {integrity: sha512-A50l7wXs+BDzblL4rmNFRvNAKirdjgZVW1qmiCaFIMy24qdDfN9soRFhtfhXr9NQE2L0O6akszA6O5xh9yLcCg==}
+  '@tanstack/router-core@1.132.21':
+    resolution: {integrity: sha512-C+Pe/p6EwMs9DIPBfAXoNtbp1POo/abfl4AEWsDXNAnjVr2OB6aHFMIENUJx1cjs6zUT/4t9FtA/+zptSWtv9A==}
     engines: {node: '>=12'}
 
   '@tanstack/store@0.7.0':
@@ -4209,13 +4209,13 @@ snapshots:
       '@testing-library/user-event': 14.6.1(@testing-library/dom@9.3.4)
       ts-dedent: 2.2.0
 
-  '@tanstack/history@1.132.0': {}
+  '@tanstack/history@1.132.21': {}
 
-  '@tanstack/react-router@1.132.19(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
+  '@tanstack/react-router@1.132.23(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
-      '@tanstack/history': 1.132.0
+      '@tanstack/history': 1.132.21
       '@tanstack/react-store': 0.7.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@tanstack/router-core': 1.132.19
+      '@tanstack/router-core': 1.132.21
       isbot: 5.1.28
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
@@ -4229,9 +4229,9 @@ snapshots:
       react-dom: 19.1.1(react@19.1.1)
       use-sync-external-store: 1.4.0(react@19.1.1)
 
-  '@tanstack/router-core@1.132.19':
+  '@tanstack/router-core@1.132.21':
     dependencies:
-      '@tanstack/history': 1.132.0
+      '@tanstack/history': 1.132.21
       '@tanstack/store': 0.7.0
       cookie-es: 2.0.0
       seroval: 1.3.2

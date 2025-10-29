@@ -9,6 +9,7 @@ import {
   YAxis,
 } from 'recharts';
 
+import { Card, CardContent } from '@components/ui/card';
 import { Player } from '@utils/xlsxParser';
 
 interface PlayerPerformanceChartProps {
@@ -24,39 +25,56 @@ const PlayerPerformanceChart = ({ players }: PlayerPerformanceChartProps) => {
   }));
 
   return (
-    <div className="h-[400px] w-full rounded-lg bg-background-card p-4">
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          data={data}
-          margin={{ top: 20, right: 0, left: 0, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-          <XAxis
-            dataKey="name"
-            angle={-45}
-            textAnchor="end"
-            height={100}
-            stroke="#999"
-            interval={0}
-          />
-          <YAxis stroke="#999" tickFormatter={(value) => value.toFixed(2)} />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: '#1a1a1a',
-              border: '1px solid #444',
-              borderRadius: '4px',
-              color: '#fff',
-            }}
-            formatter={(value: number) => value.toFixed(2)}
-            cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}
-          />
-          <Legend />
-          <Bar dataKey="goals" name="Goals/Match" fill="#689820" />
-          <Bar dataKey="assists" name="Assists/Match" fill="#982054" />
-          <Bar dataKey="points" name="Points/Match" fill="#206498" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+    <Card>
+      <CardContent className="h-[400px] p-4">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={data}
+            margin={{ top: 20, right: 0, left: 0, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+            <XAxis
+              dataKey="name"
+              angle={-45}
+              textAnchor="end"
+              height={100}
+              className="stroke-muted-foreground"
+              interval={0}
+            />
+            <YAxis
+              className="stroke-muted-foreground"
+              tickFormatter={(value) => value.toFixed(2)}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'hsl(var(--card))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 'calc(var(--radius) - 2px)',
+                color: 'hsl(var(--card-foreground))',
+              }}
+              formatter={(value: number) => value.toFixed(2)}
+              cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
+            />
+            <Legend />
+            <Bar
+              dataKey="goals"
+              name="Goals/Match"
+              fill="hsl(var(--secondary))"
+            />
+            <Bar
+              dataKey="assists"
+              name="Assists/Match"
+              fill="hsl(var(--primary))"
+            />
+            <Bar
+              dataKey="points"
+              name="Points/Match"
+              fill="hsl(var(--muted-foreground))"
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>
   );
 };
 

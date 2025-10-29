@@ -1,6 +1,9 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 
-import clsx from 'clsx';
+import { Upload } from 'lucide-react';
+
+import { Card } from '@components/ui/card';
+import { cn } from '@utils/cn';
 
 interface FileUploadProps {
   onFileUpload: (file: File) => void;
@@ -95,13 +98,13 @@ const FileUpload = ({ onFileUpload }: FileUploadProps) => {
 
   return (
     <div className="mb-12">
-      <div
+      <Card
         onClick={handleClick}
-        className={clsx(
-          'flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors hover:border-primary hover:bg-primary/5',
+        className={cn(
+          'flex min-h-[200px] cursor-pointer flex-col items-center justify-center border-2 border-dashed p-6 transition-colors hover:border-primary hover:bg-primary/5',
           {
             'border-primary bg-primary/10': isDragging,
-            'border-gray-300': !isDragging,
+            'border-border': !isDragging,
           },
         )}
         onDragEnter={handleDragIn}
@@ -110,23 +113,11 @@ const FileUpload = ({ onFileUpload }: FileUploadProps) => {
         onDrop={handleDrop}
       >
         <div className="flex flex-col items-center gap-2 text-center">
-          <svg
-            className="size-10 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-            />
-          </svg>
-          <p className="text-sm text-gray-300">
+          <Upload className="size-10 text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">
             Drop XLSX file here, click to select, or paste from clipboard
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-muted-foreground">
             Only .xlsx files are supported
           </p>
         </div>
@@ -137,7 +128,7 @@ const FileUpload = ({ onFileUpload }: FileUploadProps) => {
           accept=".xlsx"
           className="hidden"
         />
-      </div>
+      </Card>
     </div>
   );
 };

@@ -2,7 +2,7 @@ import { Component, ErrorInfo, ReactNode } from 'react';
 
 import { toast } from 'sonner';
 
-import Button from './Button';
+import { Button } from './Button';
 
 interface Props {
   children: ReactNode;

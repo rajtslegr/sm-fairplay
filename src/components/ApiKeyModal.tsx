@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
@@ -23,14 +23,17 @@ interface ApiKeyModalProps {
   onSuccess: (apiKey: string) => void;
 }
 
-const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
-  const { getOpenAIKey, setOpenAIKey } = useStore();
-  const [apiKey, setApiKey] = useState('');
+const ApiKeyInput = ({
+  initialValue,
+  onSave,
+  onClose,
+}: {
+  initialValue: string;
+  onSave: (key: string) => void;
+  onClose: () => void;
+}) => {
+  const [apiKey, setApiKey] = useState(initialValue);
   const [showKey, setShowKey] = useState(false);
-
-  useEffect(() => {
-    setApiKey(getOpenAIKey() || '');
-  }, [getOpenAIKey, isOpen]);
 
   const handleSave = () => {
     if (apiKey.trim()) {
@@ -41,13 +44,63 @@ const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
         return;
       }
 
-      setOpenAIKey(trimmedKey);
-      toast.success('API key saved!');
-      onSuccess(trimmedKey);
+      onSave(trimmedKey);
     } else {
       toast.error('Please enter a valid API key');
     }
   };
+
+  return (
+    <>
+      <div className="space-y-2">
+        <Label htmlFor="api-key">API Key</Label>
+        <div className="relative">
+          <Input
+            id="api-key"
+            type={showKey ? 'text' : 'password'}
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            placeholder="sk-..."
+            className="pr-10"
+          />
+          <button
+            type="button"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            onClick={() => setShowKey(!showKey)}
+          >
+            {showKey ? (
+              <EyeOff className="size-4" />
+            ) : (
+              <Eye className="size-4" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      <DialogFooter>
+        <Button variant="outline" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button onClick={handleSave}>Save & Continue</Button>
+      </DialogFooter>
+    </>
+  );
+};
+
+const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
+  const { getOpenAIKey, setOpenAIKey } = useStore();
+
+  const handleSave = (key: string) => {
+    setOpenAIKey(key);
+    toast.success('API key saved!');
+    onSuccess(key);
+  };
+
+  const initialValue = isOpen ? getOpenAIKey() || '' : '';
+  const inputKey = useMemo(
+    () => `api-key-${isOpen}-${initialValue}`,
+    [isOpen, initialValue],
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -91,37 +144,14 @@ const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
           .
         </p>
 
-        <div className="space-y-2">
-          <Label htmlFor="api-key">API Key</Label>
-          <div className="relative">
-            <Input
-              id="api-key"
-              type={showKey ? 'text' : 'password'}
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="sk-..."
-              className="pr-10"
-            />
-            <button
-              type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              onClick={() => setShowKey(!showKey)}
-            >
-              {showKey ? (
-                <EyeOff className="size-4" />
-              ) : (
-                <Eye className="size-4" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave}>Save & Continue</Button>
-        </DialogFooter>
+        {isOpen && (
+          <ApiKeyInput
+            key={inputKey}
+            initialValue={initialValue}
+            onSave={handleSave}
+            onClose={onClose}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

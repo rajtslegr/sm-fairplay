@@ -52,7 +52,9 @@ const PlayerPerformanceChart = ({ players }: PlayerPerformanceChartProps) => {
                 borderRadius: 'calc(var(--radius) - 2px)',
                 color: 'hsl(var(--card-foreground))',
               }}
-              formatter={(value: number) => value.toFixed(2)}
+              formatter={(value) =>
+                typeof value === 'number' ? value.toFixed(2) : value
+              }
               cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
             />
             <Legend />

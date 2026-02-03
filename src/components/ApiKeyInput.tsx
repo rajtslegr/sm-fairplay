@@ -16,16 +16,16 @@ import { Label } from '@components/ui/label';
 import { useStore } from '@store/useStore';
 
 const ApiKeyInput = () => {
-  const { getOpenAIKey, setOpenAIKey } = useStore();
-  const [apiKey, setApiKey] = useState(getOpenAIKey() || '');
+  const { getApiKey, setApiKey: setStoredApiKey } = useStore();
+  const [apiKey, setApiKey] = useState(getApiKey() || '');
   const [showKey, setShowKey] = useState(false);
 
   const handleSave = () => {
     if (apiKey.trim()) {
-      setOpenAIKey(apiKey.trim());
+      setStoredApiKey(apiKey.trim());
       toast.success('API key saved!');
     } else {
-      setOpenAIKey('');
+      setStoredApiKey('');
       toast.error('API key cleared');
     }
   };
@@ -33,10 +33,10 @@ const ApiKeyInput = () => {
   return (
     <Card className="mb-8 w-full max-w-4xl sm:mb-12">
       <CardHeader>
-        <CardTitle>OpenAI API Key</CardTitle>
+        <CardTitle>OpenRouter API Key</CardTitle>
         <CardDescription>
-          Enter your OpenAI API key to use AI for team formation. Your key is
-          stored locally and is never sent to our servers.
+          Enter your OpenRouter API key to use AI for team formation with Kimi
+          K2.5. Your key is stored locally and is never sent to our servers.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -50,7 +50,7 @@ const ApiKeyInput = () => {
               type={showKey ? 'text' : 'password'}
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              placeholder="sk-..."
+              placeholder="sk-or-..."
               className="pr-10"
             />
             <button
@@ -68,7 +68,7 @@ const ApiKeyInput = () => {
           <Button onClick={handleSave}>Save API Key</Button>
         </div>
         <div className="mt-2 text-xs text-muted-foreground">
-          {getOpenAIKey() ? (
+          {getApiKey() ? (
             <span className="text-green-400">✓ API key is set</span>
           ) : (
             <span className="text-yellow-400">

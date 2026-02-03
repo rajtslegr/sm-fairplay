@@ -7,7 +7,7 @@ import FileUpload from '@components/FileUpload';
 import PlayerSelection from '@components/PlayerSelection';
 import TeamDisplay from '@components/TeamDisplay';
 import { useStore } from '@store/useStore';
-import { selectTeamsWithAI } from '@utils/openAITeamSelection';
+import { selectTeamsWithAI } from '@utils/AiTeamSelection';
 import { selectTeams } from '@utils/teamSelection';
 import { parseXlsxData, Player } from '@utils/xlsxParser';
 
@@ -20,8 +20,8 @@ export const Homepage = () => {
     setTeams,
     reset,
     resetSelection,
-    getOpenAIKey,
-    isOpenAIKeyValid,
+    getApiKey,
+    isApiKeyValid,
     setMatchHistory,
     matchHistory,
   } = useStore();
@@ -92,7 +92,7 @@ export const Homepage = () => {
 
     try {
       if (!apiKey || apiKey.trim() === '') {
-        toast.error('OpenAI API key is missing or invalid.');
+        toast.error('OpenRouter API key is missing or invalid.');
         toast.dismiss(toastId);
         setIsGenerating(false);
         return;
@@ -130,11 +130,11 @@ export const Homepage = () => {
   };
 
   const handlePlayersSelectedWithAI = (selectedPlayers: Player[]) => {
-    if (!isOpenAIKeyValid()) {
+    if (!isApiKeyValid()) {
       setPendingSelectedPlayers(selectedPlayers);
       setIsApiKeyModalOpen(true);
     } else {
-      const apiKey = getOpenAIKey();
+      const apiKey = getApiKey();
       generateTeamsWithAI(selectedPlayers, apiKey);
     }
   };

@@ -39,8 +39,10 @@ const ApiKeyInput = ({
     if (apiKey.trim()) {
       const trimmedKey = apiKey.trim();
 
-      if (!trimmedKey.startsWith('sk-')) {
-        toast.error('Invalid API key format. OpenAI API keys start with "sk-"');
+      if (!trimmedKey.startsWith('sk-or-')) {
+        toast.error(
+          'Invalid API key format. OpenRouter API keys start with "sk-or-"',
+        );
         return;
       }
 
@@ -60,7 +62,7 @@ const ApiKeyInput = ({
             type={showKey ? 'text' : 'password'}
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
-            placeholder="sk-..."
+            placeholder="sk-or-..."
             className="pr-10"
           />
           <button
@@ -88,15 +90,15 @@ const ApiKeyInput = ({
 };
 
 const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
-  const { getOpenAIKey, setOpenAIKey } = useStore();
+  const { getApiKey, setApiKey } = useStore();
 
   const handleSave = (key: string) => {
-    setOpenAIKey(key);
+    setApiKey(key);
     toast.success('API key saved!');
     onSuccess(key);
   };
 
-  const initialValue = isOpen ? getOpenAIKey() || '' : '';
+  const initialValue = isOpen ? getApiKey() || '' : '';
   const inputKey = useMemo(
     () => `api-key-${isOpen}-${initialValue}`,
     [isOpen, initialValue],
@@ -106,10 +108,11 @@ const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>OpenAI API Key Required</DialogTitle>
+          <DialogTitle>OpenRouter API Key Required</DialogTitle>
           <DialogDescription>
-            Enter your OpenAI API key to use AI for team formation. The AI will
-            analyze all player statistics to create optimally balanced teams.
+            Enter your OpenRouter API key to use AI for team formation. The AI
+            will analyze all player statistics to create optimally balanced
+            teams using Kimi K2.5.
           </DialogDescription>
         </DialogHeader>
 
@@ -121,7 +124,7 @@ const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
             <ul className="list-disc pl-5 text-sm">
               <li className="mb-1">
                 <strong>Use restricted API keys</strong> with usage limits set
-                in your OpenAI dashboard
+                in your OpenRouter dashboard
               </li>
               <li className="mb-1">
                 Your key will be stored encrypted in your browser
@@ -134,12 +137,12 @@ const ApiKeyModal = ({ isOpen, onClose, onSuccess }: ApiKeyModalProps) => {
           Your key is stored locally in your browser and is never sent to our
           servers. You can get an API key from{' '}
           <a
-            href="https://platform.openai.com/api-keys"
+            href="https://openrouter.ai/keys"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary hover:underline"
           >
-            OpenAI&apos;s website
+            OpenRouter&apos;s website
           </a>
           .
         </p>

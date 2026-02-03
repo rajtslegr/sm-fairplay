@@ -26,9 +26,9 @@ interface AppState {
   setShowAbout: (show: boolean) => void;
   setSelectedPlayers: (players: Player[]) => void;
   setAllPlayers: (players: Player[]) => void;
-  setOpenAIKey: (key: string) => void;
-  getOpenAIKey: () => string;
-  isOpenAIKeyValid: () => boolean;
+  setApiKey: (key: string) => void;
+  getApiKey: () => string;
+  isApiKeyValid: () => boolean;
   reset: () => void;
   resetSelection: () => void;
 }
@@ -53,21 +53,21 @@ export const useStore = create(
       setShowAbout: (showAbout) => set({ showAbout }),
       setSelectedPlayers: (selectedPlayers) => set({ selectedPlayers }),
       setAllPlayers: (allPlayers) => set({ allPlayers }),
-      setOpenAIKey: (key) =>
+      setApiKey: (key: string) =>
         set({
           encryptedApiKey: {
             key: encryptApiKey(key),
             timestamp: Date.now(),
           },
         }),
-      getOpenAIKey: () => {
+      getApiKey: () => {
         const { encryptedApiKey } = get();
         if (!encryptedApiKey.key) {
           return '';
         }
         return decryptApiKey(encryptedApiKey.key);
       },
-      isOpenAIKeyValid: () => {
+      isApiKeyValid: () => {
         const { encryptedApiKey } = get();
         return !!encryptedApiKey.key;
       },

@@ -29,7 +29,7 @@ const PlayerSelection = ({
     setAllPlayers,
     teamA,
     teamB,
-    getOpenAIKey,
+    getApiKey,
   } = useStore();
   const [newPlayerName, setNewPlayerName] = useState('');
   const [listChanged, setListChanged] = useState(false);
@@ -149,10 +149,9 @@ const PlayerSelection = ({
             {showAIInfo && !isGenerating && (
               <Card className="absolute bottom-full left-0 mb-2 w-64 border border-border bg-popover p-3 shadow-lg animate-in">
                 <p className="text-xs leading-relaxed text-popover-foreground">
-                  Uses OpenAI to analyze all player statistics and create
-                  optimally balanced teams.
-                  {!getOpenAIKey() &&
-                    " You'll be prompted to enter an API key."}
+                  Uses Kimi K2.5 via OpenRouter to analyze all player statistics
+                  and create optimally balanced teams.
+                  {!getApiKey() && " You'll be prompted to enter an API key."}
                 </p>
               </Card>
             )}

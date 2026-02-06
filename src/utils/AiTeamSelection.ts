@@ -46,13 +46,15 @@ export const selectTeamsWithAI = async (
   const openrouter = new OpenRouter({ apiKey });
 
   const stream = await openrouter.chat.send({
-    model: 'moonshotai/kimi-k2.5',
-    stream: true,
-    responseFormat: { type: 'json_object' },
-    messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: buildUserPrompt(players, matchHistory) },
-    ],
+    chatGenerationParams: {
+      model: 'moonshotai/kimi-k2.5',
+      stream: true,
+      responseFormat: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: buildUserPrompt(players, matchHistory) },
+      ],
+    },
   });
 
   const iterator = stream[Symbol.asyncIterator]();

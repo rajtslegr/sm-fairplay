@@ -39,7 +39,7 @@
     "zustand": "5.0.11"
   },
   "devDependencies": {
-    "@playwright/test": "1.58.1",
+    "@playwright/test": "1.58.2",
     "@storybook/addon-docs": "10.2.7",
     "@storybook/addon-links": "10.2.7",
     "@storybook/addon-onboarding": "10.2.7",

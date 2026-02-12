@@ -45,10 +45,10 @@ export const selectTeamsWithAI = async (
 ): Promise<AITeamSelectionResult> => {
   const openrouter = new OpenRouter({ apiKey });
 
-  const stream = await openrouter.chat.send({
+  const response = await openrouter.chat.send({
     chatGenerationParams: {
-      model: 'moonshotai/kimi-k2.5',
-      stream: true,
+      model: 'z-ai/glm-5',
+      stream: false, // Změna zde
       responseFormat: { type: 'json_object' },
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
@@ -57,16 +57,11 @@ export const selectTeamsWithAI = async (
     },
   });
 
-  const iterator = stream[Symbol.asyncIterator]();
-  const readStream = async (acc: string): Promise<string> => {
-    const { done, value } = await iterator.next();
-    if (done) return acc;
-    const delta = value.choices[0]?.delta?.content;
-    return readStream(delta ? acc + delta : acc);
-  };
+  const content = response.choices[0]?.message?.content || '';
 
-  const content = await readStream('');
-  const result = JSON.parse(content);
+  if (!content) throw new Error('Empty response');
+
+  const result = JSON.parse(String(content));
 
   function mapPlayers(names: string[]) {
     return names

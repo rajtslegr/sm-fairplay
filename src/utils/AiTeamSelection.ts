@@ -9,33 +9,38 @@ export interface AITeamSelectionResult {
 }
 
 const SYSTEM_PROMPT =
-  'You are an expert sports analyst. Create two EQUALLY strong teams. Return ONLY valid JSON.';
+  'You are an expert sports analyst that can create balanced teams based on player statistics and historical performance. Your PRIMARY goal is to create two EQUALLY strong teams with balanced skill distribution. The teams should be as evenly matched as possible, ensuring fair competition.';
 
 function buildUserPrompt(players: Player[], matchHistory: Match[]): string {
-  const history =
-    matchHistory.length > 0
-      ? `\nMatch history: ${JSON.stringify(matchHistory.slice(-5))}`
-      : '';
-
-  return `Create two balanced teams from these ${players.length} players. Goal: EQUAL team strength.
-
-  Rules:
-  1. Balance by: goals/match, assists/match, points/match
-  2. Use match history if provided
-  3. Distribute strong players evenly
-
-  Return EXACTLY this JSON structure (no markdown, no extra text):
+  return `I need to create two perfectly balanced teams from these players. 
+  Please analyze ALL their statistics thoroughly and form two teams that are as BALANCED and FAIR as possible. The goal is to have two teams of EQUAL STRENGTH.
+  
+  Consider the following in your analysis:
+  1. Individual player performance metrics (goals, assists, points per match)
+  2. Historical team compositions and results from past matches (if provided)
+  3. Even distribution of player skills - do NOT group strong players together
+  4. Team balance in terms of offensive and defensive capabilities
+  
+  In addition to creating balanced teams, please provide:
+  1. A detailed explanation of your team selection strategy and how you achieved equal strength between teams
+  2. For EACH player, explain specifically why you placed them in their assigned team, citing their stats and historical performance
+  3. If using match history data, include specific examples from past games that influenced your distribution of player talent
+  4. Explain how you ensured that player skills are evenly distributed between teams
+  
+  Return a JSON object with the following structure:
   {
     "teamA": ["Player Name 1", "Player Name 2", ...],
     "teamB": ["Player Name 3", "Player Name 4", ...],
-    "teamExplanation": "Brief strategy explanation (2-3 sentences)",
+    "teamExplanation": "Your detailed explanation of the overall team selection strategy and how you ensured balance...",
     "playerAssessments": {
-      "Player Name 1": "One sentence: why assigned here, key stats",
-      "Player Name 2": "One sentence: why assigned here, key stats"
+      "Player Name 1": "Detailed assessment including: why this player was assigned to their team, their key performance metrics, and how this assignment helps create balanced teams...",
+      "Player Name 2": "Detailed assessment including: why this player was assigned to their team, their key performance metrics, and how this assignment helps create balanced teams...",
+      ...and so on for all players
     }
   }
-
-  Player data: ${JSON.stringify(players)}${history}`;
+  
+  Here's the complete player data: ${JSON.stringify(players)}
+  ${matchHistory.length > 0 ? `And here's the match history data that might be useful for your analysis: ${JSON.stringify(matchHistory)}` : ''}`;
 }
 
 export const selectTeamsWithAI = async (

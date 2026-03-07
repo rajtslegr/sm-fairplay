@@ -46,10 +46,7 @@ const TeamDisplay = ({ teamA, teamB }: TeamDisplayProps) => {
             <div className="w-full sm:w-1/2">
               <Card className="mb-6 border-secondary/30 bg-secondary/15 shadow-sm">
                 <CardHeader className="px-6 py-4">
-                  <CardTitle
-                    className="text-center text-2xl font-semibold text-white sm:text-3xl"
-                    style={{ color: 'hsl(var(--secondary-foreground))' }}
-                  >
+                  <CardTitle className="text-center text-2xl font-semibold text-secondary dark:text-secondary-foreground sm:text-3xl">
                     {teamAScore.toFixed(2)}
                   </CardTitle>
                 </CardHeader>
@@ -67,10 +64,7 @@ const TeamDisplay = ({ teamA, teamB }: TeamDisplayProps) => {
             <div className="w-full sm:w-1/2">
               <Card className="mb-6 border-primary/30 bg-primary/15 shadow-sm">
                 <CardHeader className="px-6 py-4">
-                  <CardTitle
-                    className="text-center text-2xl font-semibold text-white sm:text-3xl"
-                    style={{ color: 'hsl(var(--primary-foreground))' }}
-                  >
+                  <CardTitle className="text-center text-2xl font-semibold text-primary dark:text-primary-foreground sm:text-3xl">
                     {teamBScore.toFixed(2)}
                   </CardTitle>
                 </CardHeader>

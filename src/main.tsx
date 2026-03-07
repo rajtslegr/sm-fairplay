@@ -14,17 +14,12 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <App />
       <Toaster
         position="bottom-right"
-        theme="dark"
+        theme="system"
         duration={2000}
         closeButton
         richColors
         toastOptions={{
           className: 'font-inter',
-          style: {
-            background: '#1a1a1a',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            color: '#fff',
-          },
         }}
       />
     </ErrorBoundary>

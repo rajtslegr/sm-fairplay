@@ -1,15 +1,10 @@
-import { useEffect } from 'react';
-
+import { ThemeToggle } from './ThemeToggle';
 import { useStore } from '@store/useStore';
 import { Link, Outlet } from '@tanstack/react-router';
 
 const Root = () => {
   const { players, setShowAbout } = useStore();
   const fileUploaded = players.length > 0;
-
-  useEffect(() => {
-    document.documentElement.classList.add('dark');
-  }, []);
 
   return (
     <div className="flex min-h-screen flex-col bg-background font-inter text-foreground">
@@ -44,7 +39,8 @@ const Root = () => {
               )}
             </nav>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
+            <ThemeToggle />
             <button
               onClick={() => setShowAbout(true)}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"

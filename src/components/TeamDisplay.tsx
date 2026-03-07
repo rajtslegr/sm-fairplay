@@ -5,8 +5,7 @@ import { toast } from 'sonner';
 
 import { Button } from './Button';
 import PlayerCard from './PlayerCard';
-import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
-import { useStore } from '@store/useStore';
+import { Card, CardHeader, CardTitle } from '@components/ui/card';
 import { formatTeamsForEmail } from '@utils/formatTeams';
 import { calculateTeamScore } from '@utils/teamSelection';
 import { Player } from '@utils/xlsxParser';
@@ -17,8 +16,6 @@ interface TeamDisplayProps {
 }
 
 const TeamDisplay = ({ teamA, teamB }: TeamDisplayProps) => {
-  const { teamExplanation, playerAssessments } = useStore();
-
   const [teamAScore, teamBScore] = useMemo(
     () => [calculateTeamScore(teamA), calculateTeamScore(teamB)],
     [teamA, teamB],
@@ -30,8 +27,6 @@ const TeamDisplay = ({ teamA, teamB }: TeamDisplayProps) => {
       teamB,
       teamAScore,
       teamBScore,
-      teamExplanation,
-      playerAssessments,
     );
 
     try {
@@ -45,15 +40,6 @@ const TeamDisplay = ({ teamA, teamB }: TeamDisplayProps) => {
 
   return (
     <div className="w-full max-w-6xl">
-      {teamExplanation && (
-        <Card className="mb-8 border-border/60 bg-muted/40 shadow-sm">
-          <CardContent className="p-6">
-            <p className="text-sm leading-relaxed text-foreground">
-              {teamExplanation}
-            </p>
-          </CardContent>
-        </Card>
-      )}
       {teamA.length > 0 && teamB.length > 0 && (
         <>
           <div className="flex flex-col gap-8 sm:flex-row">
@@ -74,7 +60,6 @@ const TeamDisplay = ({ teamA, teamB }: TeamDisplayProps) => {
                     key={player.name}
                     player={player}
                     teamColor="hsl(var(--secondary))"
-                    assessment={playerAssessments[player.name]}
                   />
                 ))}
               </ul>
@@ -96,7 +81,6 @@ const TeamDisplay = ({ teamA, teamB }: TeamDisplayProps) => {
                     key={player.name}
                     player={player}
                     teamColor="hsl(var(--primary))"
-                    assessment={playerAssessments[player.name]}
                   />
                 ))}
               </ul>

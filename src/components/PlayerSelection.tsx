@@ -1,26 +1,22 @@
 import { useState } from 'react';
 
-import { Plus, Copy, Zap, Loader2, RotateCcw } from 'lucide-react';
+import { Plus, Copy, Zap, RotateCcw } from 'lucide-react';
 
 import { Button } from '@components/Button';
-import { Card } from '@components/ui/card';
 import { Input } from '@components/ui/input';
 import { useStore } from '@store/useStore';
 import { Player } from '@utils/xlsxParser';
 
 interface PlayerSelectionProps {
-  players: Player[];
-  onPlayersSelected: (selectedPlayers: Player[]) => void;
-  onPlayersSelectedWithAI: (selectedPlayers: Player[]) => void;
+  onGenerateTeams: (selectedPlayers: Player[]) => void;
+  onCopyPrompt: () => void;
   onResetSelection: () => void;
-  isGenerating?: boolean;
 }
 
 const PlayerSelection = ({
-  onPlayersSelected,
-  onPlayersSelectedWithAI,
+  onGenerateTeams,
+  onCopyPrompt,
   onResetSelection,
-  isGenerating = false,
 }: PlayerSelectionProps) => {
   const {
     selectedPlayers,
@@ -29,11 +25,9 @@ const PlayerSelection = ({
     setAllPlayers,
     teamA,
     teamB,
-    getApiKey,
   } = useStore();
   const [newPlayerName, setNewPlayerName] = useState('');
   const [listChanged, setListChanged] = useState(false);
-  const [showAIInfo, setShowAIInfo] = useState(false);
 
   const togglePlayerSelection = (player: Player) => {
     const newSelection = selectedPlayers.some((p) => p.name === player.name)
@@ -63,13 +57,8 @@ const PlayerSelection = ({
     }
   };
 
-  const handleSubmit = () => {
-    onPlayersSelected(selectedPlayers);
-    setListChanged(false);
-  };
-
-  const handleSubmitWithAI = () => {
-    onPlayersSelectedWithAI(selectedPlayers);
+  const handleGenerateTeams = () => {
+    onGenerateTeams(selectedPlayers);
     setListChanged(false);
   };
 
@@ -78,6 +67,8 @@ const PlayerSelection = ({
     onResetSelection();
     setListChanged(false);
   };
+
+  const teamsGenerated = teamA.length > 0 && teamB.length > 0;
 
   return (
     <div className="mb-12 w-full max-w-6xl">
@@ -91,7 +82,6 @@ const PlayerSelection = ({
               key={player.name}
               onClick={() => togglePlayerSelection(player)}
               variant={isSelected ? 'default' : 'outline'}
-              disabled={isGenerating}
               className="w-full"
             >
               {player.name}
@@ -106,82 +96,47 @@ const PlayerSelection = ({
           onChange={(e) => setNewPlayerName(e.target.value)}
           placeholder="New player name"
           className="w-full sm:w-auto sm:flex-1"
-          disabled={isGenerating}
         />
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button
             onClick={addNewPlayer}
-            disabled={newPlayerName.trim() === '' || isGenerating}
+            disabled={newPlayerName.trim() === ''}
             variant="secondary"
           >
             <Plus className="size-4" />
             Add Player
           </Button>
           <Button
-            onClick={handleSubmit}
+            onClick={handleGenerateTeams}
             variant={
               listChanged && selectedPlayers.length > 5 ? 'default' : 'outline'
             }
-            disabled={selectedPlayers.length < 6 || isGenerating}
+            disabled={selectedPlayers.length < 6}
           >
             <Copy className="size-4" />
-            Generate
+            Generate Teams
           </Button>
-          <div className="relative">
-            <Button
-              onClick={handleSubmitWithAI}
-              variant={
-                listChanged && selectedPlayers.length > 5
-                  ? 'default'
-                  : 'outline'
-              }
-              disabled={selectedPlayers.length < 6 || isGenerating}
-              onMouseEnter={() => setShowAIInfo(true)}
-              onMouseLeave={() => setShowAIInfo(false)}
-            >
-              {isGenerating ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Zap className="size-4" />
-              )}
-              AI Generate
-            </Button>
-            {showAIInfo && !isGenerating && (
-              <Card className="absolute bottom-full left-0 mb-2 w-64 border border-border bg-popover p-3 shadow-lg animate-in">
-                <p className="text-xs leading-relaxed text-popover-foreground">
-                  Uses Kimi K2.5 via OpenRouter to analyze all player statistics
-                  and create optimally balanced teams.
-                  {!getApiKey() && " You'll be prompted to enter an API key."}
-                </p>
-              </Card>
-            )}
-          </div>
+          <Button
+            onClick={onCopyPrompt}
+            variant={teamsGenerated ? 'default' : 'outline'}
+            disabled={!teamsGenerated}
+          >
+            <Zap className="size-4" />
+            Copy Prompt
+          </Button>
           <Button
             onClick={handleReset}
             variant="ghost"
             disabled={
-              (selectedPlayers.length === 0 &&
-                teamA.length === 0 &&
-                teamB.length === 0) ||
-              isGenerating
+              selectedPlayers.length === 0 &&
+              teamA.length === 0 &&
+              teamB.length === 0
             }
           >
             <RotateCcw className="size-4" />
             Reset
           </Button>
         </div>
-      </div>
-      <div className="mt-8 rounded-lg border border-border bg-muted/50 p-4 shadow-sm">
-        <p className="flex items-center gap-2 text-sm">
-          <span className="rounded-full bg-foreground px-2 py-0.5 text-xs font-medium text-background">
-            AI
-          </span>
-          <span className="text-muted-foreground">
-            The AI team generation uses all player data including goals,
-            assists, points, and matches played to create optimally balanced
-            teams.
-          </span>
-        </p>
       </div>
     </div>
   );

@@ -1,5 +1,3 @@
-import { Info } from 'lucide-react';
-
 import { Card, CardContent, CardHeader } from '@components/ui/card';
 import { cn } from '@utils/cn';
 import { calculatePlayerScore } from '@utils/teamSelection';
@@ -8,7 +6,6 @@ import { Player } from '@utils/xlsxParser';
 interface PlayerCardProps {
   player: Player;
   teamColor: string;
-  assessment?: string;
 }
 
 interface StatItemProps {
@@ -31,7 +28,7 @@ const StatItem = ({ label, value, total, color }: StatItemProps) => (
   </div>
 );
 
-const PlayerCard = ({ player, teamColor, assessment }: PlayerCardProps) => {
+const PlayerCard = ({ player, teamColor }: PlayerCardProps) => {
   const playerScore = calculatePlayerScore(player);
 
   return (
@@ -81,23 +78,6 @@ const PlayerCard = ({ player, teamColor, assessment }: PlayerCardProps) => {
                 {player.matches}
               </span>
             </span>
-          </div>
-
-          <div className="min-h-[80px] rounded-md border border-border bg-muted/50 p-3">
-            {assessment ? (
-              <div className="flex items-start gap-2">
-                <Info className="mt-0.5 size-4 shrink-0 text-blue-500" />
-                <div className="relative flex-1">
-                  <p className="text-xs leading-relaxed text-muted-foreground">
-                    {assessment}
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="text-xs italic text-muted-foreground">
-                No AI assessment available
-              </div>
-            )}
           </div>
         </CardContent>
       </Card>

@@ -1,5 +1,5 @@
 import { PLAYER_SCORE_WEIGHTS } from './constants';
-import { Player } from './xlsxParser';
+import { Match, Player } from './xlsxParser';
 
 export const calculatePlayerScore = (player: Player): number => {
   const { goalWeight, assistWeight, pointWeight } = PLAYER_SCORE_WEIGHTS;
@@ -14,7 +14,82 @@ export const calculatePlayerScore = (player: Player): number => {
 export const calculateTeamScore = (team: Player[]): number =>
   team.reduce((sum, player) => sum + calculatePlayerScore(player), 0);
 
-export const selectTeams = (players: Player[]): [Player[], Player[]] => {
+interface SynergyCache {
+  pairWins: Map<string, number>;
+  pairLosses: Map<string, number>;
+  pairGames: Map<string, number>;
+}
+
+const getPlayerPairKey = (name1: string, name2: string): string => {
+  return [name1, name2].sort().join('|');
+};
+
+const buildSynergyCache = (matchHistory: Match[]): SynergyCache => {
+  const pairWins = new Map<string, number>();
+  const pairLosses = new Map<string, number>();
+  const pairGames = new Map<string, number>();
+
+  matchHistory.forEach((match) => {
+    const team1Players = match.team1Players ?? [];
+    const team2Players = match.team2Players ?? [];
+
+    const team1Won = match.team1Goals > match.team2Goals;
+    const team2Won = match.team2Goals > match.team1Goals;
+
+    team1Players.forEach((p1, i) => {
+      team1Players.slice(i + 1).forEach((p2) => {
+        const key = getPlayerPairKey(p1, p2);
+        pairGames.set(key, (pairGames.get(key) ?? 0) + 1);
+        if (team1Won) {
+          pairWins.set(key, (pairWins.get(key) ?? 0) + 1);
+        } else if (team2Won) {
+          pairLosses.set(key, (pairLosses.get(key) ?? 0) + 1);
+        }
+      });
+    });
+
+    team2Players.forEach((p1, i) => {
+      team2Players.slice(i + 1).forEach((p2) => {
+        const key = getPlayerPairKey(p1, p2);
+        pairGames.set(key, (pairGames.get(key) ?? 0) + 1);
+        if (team2Won) {
+          pairWins.set(key, (pairWins.get(key) ?? 0) + 1);
+        } else if (team1Won) {
+          pairLosses.set(key, (pairLosses.get(key) ?? 0) + 1);
+        }
+      });
+    });
+  });
+
+  return { pairWins, pairLosses, pairGames };
+};
+
+const calculateTeamSynergy = (team: Player[], cache: SynergyCache): number => {
+  let totalSynergy = 0;
+  let pairCount = 0;
+
+  for (let i = 0; i < team.length; i += 1) {
+    for (let j = i + 1; j < team.length; j += 1) {
+      const key = getPlayerPairKey(team[i].name, team[j].name);
+      const games = cache.pairGames.get(key) ?? 0;
+      const wins = cache.pairWins.get(key) ?? 0;
+      const losses = cache.pairLosses.get(key) ?? 0;
+
+      if (games > 0) {
+        const winRate = wins / games;
+        const lossRate = losses / games;
+        totalSynergy += winRate - lossRate;
+        pairCount += 1;
+      }
+    }
+  }
+
+  if (pairCount === 0) return 0;
+
+  return totalSynergy / pairCount;
+};
+
+const selectTeamsWithoutHistory = (players: Player[]): [Player[], Player[]] => {
   const sortedPlayers = [...players].sort(
     (a, b) => calculatePlayerScore(b) - calculatePlayerScore(a),
   );
@@ -31,7 +106,11 @@ export const selectTeams = (players: Player[]): [Player[], Player[]] => {
     if (remainingPlayers.length === 0) {
       const teamAScore = calculateTeamScore(teamA);
       const teamBScore = calculateTeamScore(teamB);
-      const scoreDifference = Math.abs(teamAScore - teamBScore);
+
+      // Calculate average skill per player (handles uneven teams like 5v4)
+      const avgSkillA = teamA.length > 0 ? teamAScore / teamA.length : 0;
+      const avgSkillB = teamB.length > 0 ? teamBScore / teamB.length : 0;
+      const scoreDifference = Math.abs(avgSkillA - avgSkillB);
 
       if (
         scoreDifference < minScoreDifference &&
@@ -47,17 +126,13 @@ export const selectTeams = (players: Player[]): [Player[], Player[]] => {
     const player = remainingPlayers[0];
     const newRemainingPlayers = remainingPlayers.slice(1);
 
-    if (
-      teamA.length <= teamB.length &&
-      teamA.length < Math.ceil(players.length / 2)
-    ) {
+    // Try adding to team A if there's room
+    if (teamA.length < Math.ceil(players.length / 2)) {
       generateCombinations(newRemainingPlayers, [...teamA, player], teamB);
     }
 
-    if (
-      teamB.length <= teamA.length &&
-      teamB.length < Math.ceil(players.length / 2)
-    ) {
+    // Try adding to team B if there's room
+    if (teamB.length < Math.ceil(players.length / 2)) {
       generateCombinations(newRemainingPlayers, teamA, [...teamB, player]);
     }
   };
@@ -65,4 +140,108 @@ export const selectTeams = (players: Player[]): [Player[], Player[]] => {
   generateCombinations(sortedPlayers, [], []);
 
   return [bestTeamA, bestTeamB];
+};
+
+const selectTeamsWithHistory = (
+  players: Player[],
+  matchHistory: Match[],
+): [Player[], Player[]] => {
+  const cache = buildSynergyCache(matchHistory);
+  const sortedPlayers = [...players].sort(
+    (a, b) => calculatePlayerScore(b) - calculatePlayerScore(a),
+  );
+
+  let bestTeamA: Player[] = [];
+  let bestTeamB: Player[] = [];
+  let bestScore = Infinity;
+
+  const SKILL_WEIGHT = 0.7;
+  const SYNERGY_WEIGHT = 0.3;
+
+  const generateCombinations = (
+    remainingPlayers: Player[],
+    teamA: Player[],
+    teamB: Player[],
+  ) => {
+    if (remainingPlayers.length === 0) {
+      if (Math.abs(teamA.length - teamB.length) > 1) return;
+
+      const teamAScore = calculateTeamScore(teamA);
+      const teamBScore = calculateTeamScore(teamB);
+
+      // Calculate average skill per player (handles uneven teams like 5v4)
+      const avgSkillA = teamA.length > 0 ? teamAScore / teamA.length : 0;
+      const avgSkillB = teamB.length > 0 ? teamBScore / teamB.length : 0;
+      const skillDiff = Math.abs(avgSkillA - avgSkillB);
+
+      const teamASynergy = calculateTeamSynergy(teamA, cache);
+      const teamBSynergy = calculateTeamSynergy(teamB, cache);
+
+      // Use sum of positive synergies - we want pairs with GOOD synergy
+      // to stay together (positive = won together, negative = lost together)
+      const positiveSynergySum =
+        Math.max(0, teamASynergy) + Math.max(0, teamBSynergy);
+
+      // Normalize skill diff (max possible is max player score)
+      const maxPlayerScore = calculatePlayerScore(sortedPlayers[0]);
+      const normalizedSkillDiff =
+        maxPlayerScore > 0 ? skillDiff / maxPlayerScore : 0;
+
+      // Normalize positive synergy (each team can have synergy from 0 to 1)
+      const maxPossiblePositiveSynergy = 2; // 2 teams × 1 max positive synergy each
+      const normalizedPositiveSynergy =
+        positiveSynergySum / maxPossiblePositiveSynergy;
+
+      // Combined score: minimize skill diff, MAXIMIZE positive synergy
+      // When skill is equal, higher positive synergy wins
+      const combinedScore =
+        SKILL_WEIGHT * normalizedSkillDiff -
+        SYNERGY_WEIGHT * normalizedPositiveSynergy;
+
+      if (combinedScore < bestScore) {
+        bestScore = combinedScore;
+        bestTeamA = [...teamA];
+        bestTeamB = [...teamB];
+      }
+      return;
+    }
+
+    const player = remainingPlayers[0];
+    const newRemainingPlayers = remainingPlayers.slice(1);
+
+    // Try adding to team A if there's room
+    if (teamA.length < Math.ceil(players.length / 2)) {
+      generateCombinations(newRemainingPlayers, [...teamA, player], teamB);
+    }
+
+    // Try adding to team B if there's room
+    if (teamB.length < Math.ceil(players.length / 2)) {
+      generateCombinations(newRemainingPlayers, teamA, [...teamB, player]);
+    }
+  };
+
+  generateCombinations(sortedPlayers, [], []);
+
+  return [bestTeamA, bestTeamB];
+};
+
+export const selectTeams = (
+  players: Player[],
+  matchHistory: Match[] = [],
+): [Player[], Player[]] => {
+  if (matchHistory.length === 0) {
+    return selectTeamsWithoutHistory(players);
+  }
+
+  const hasPlayerData = matchHistory.some(
+    (m) =>
+      (m.team1Players && m.team1Players.length > 0) ||
+      (m.team2Players && m.team2Players.length > 0),
+  );
+
+  if (!hasPlayerData) {
+    return selectTeamsWithoutHistory(players);
+  }
+
+  return selectTeamsWithHistory(players, matchHistory);
 };

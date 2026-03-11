@@ -1,6 +1,7 @@
 import { create, StateCreator } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { SelectionStats } from '@utils/teamSelectionCore';
 import { Match, Player } from '@utils/xlsxParser';
 
 interface AppState {
@@ -11,9 +12,14 @@ interface AppState {
   selectedPlayers: Player[];
   allPlayers: Player[];
   matchHistory: Match[];
+  debugInfo: SelectionStats | null;
   setPlayers: (players: Player[]) => void;
   setMatchHistory: (matches: Match[]) => void;
-  setTeams: (teamA: Player[], teamB: Player[]) => void;
+  setTeams: (
+    teamA: Player[],
+    teamB: Player[],
+    debugInfo?: SelectionStats,
+  ) => void;
   setShowAbout: (show: boolean) => void;
   setSelectedPlayers: (players: Player[]) => void;
   setAllPlayers: (players: Player[]) => void;
@@ -31,9 +37,10 @@ export const useStore = create(
       selectedPlayers: [],
       allPlayers: [],
       matchHistory: [],
+      debugInfo: null,
       setPlayers: (players) => set({ players, allPlayers: players }),
       setMatchHistory: (matchHistory) => set({ matchHistory }),
-      setTeams: (teamA, teamB) => set({ teamA, teamB }),
+      setTeams: (teamA, teamB, debugInfo) => set({ teamA, teamB, debugInfo }),
       setShowAbout: (showAbout) => set({ showAbout }),
       setSelectedPlayers: (selectedPlayers) => set({ selectedPlayers }),
       setAllPlayers: (allPlayers) => set({ allPlayers }),
@@ -45,12 +52,14 @@ export const useStore = create(
           selectedPlayers: [],
           allPlayers: [],
           matchHistory: [],
+          debugInfo: null,
         }),
       resetSelection: () =>
         set({
           selectedPlayers: [],
           teamA: [],
           teamB: [],
+          debugInfo: null,
         }),
     }),
     {

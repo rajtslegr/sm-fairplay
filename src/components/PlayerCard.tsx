@@ -1,11 +1,13 @@
 import { Card, CardContent, CardHeader } from '@components/ui/card';
-import { cn } from '@utils/cn';
+import { cn, getSynergyColorClass } from '@utils/cn';
 import { calculatePlayerScore } from '@utils/teamSelection';
+import { TeamStats } from '@utils/teamSelectionCore';
 import { Player } from '@utils/xlsxParser';
 
 interface PlayerCardProps {
   player: Player;
   teamColor: string;
+  teamStats?: TeamStats;
 }
 
 interface StatItemProps {
@@ -28,8 +30,25 @@ const StatItem = ({ label, value, total, color }: StatItemProps) => (
   </div>
 );
 
-const PlayerCard = ({ player, teamColor }: PlayerCardProps) => {
+const PlayerCard = ({ player, teamColor, teamStats }: PlayerCardProps) => {
   const playerScore = calculatePlayerScore(player);
+
+  // Find this player's synergy info from team stats
+  const playerSynergies = teamStats?.synergyDetails?.filter(
+    (detail) =>
+      detail.player1 === player.name || detail.player2 === player.name,
+  );
+
+  const synergiesWithHistory = playerSynergies?.filter(
+    (s) => s.gamesTogether > 0,
+  );
+
+  // Calculate average synergy with teammates
+  const avgSynergy =
+    synergiesWithHistory && synergiesWithHistory.length > 0
+      ? synergiesWithHistory.reduce((sum, s) => sum + s.contribution, 0) /
+        synergiesWithHistory.length
+      : null;
 
   return (
     <li className="mb-4">
@@ -41,7 +60,7 @@ const PlayerCard = ({ player, teamColor }: PlayerCardProps) => {
             </h3>
             <div
               className={cn(
-                'font-mono flex size-12 shrink-0 items-center justify-center rounded-md text-base font-semibold text-white shadow-sm',
+                'font-mono flex px-2 shrink-0 items-center justify-center rounded-md text-base font-semibold text-white shadow-sm',
               )}
               style={{ backgroundColor: teamColor }}
             >
@@ -79,6 +98,56 @@ const PlayerCard = ({ player, teamColor }: PlayerCardProps) => {
               </span>
             </span>
           </div>
+
+          {/* Player Synergy Section */}
+          {synergiesWithHistory && synergiesWithHistory.length > 0 && (
+            <div className="space-y-2 rounded-md border border-border bg-muted/30 p-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-medium text-muted-foreground">
+                  Teammate History
+                </span>
+                {avgSynergy !== null && (
+                  <span
+                    className={`font-mono font-semibold ${getSynergyColorClass(
+                      avgSynergy,
+                    )}`}
+                  >
+                    Avg: {avgSynergy > 0 ? '+' : ''}
+                    {avgSynergy.toFixed(2)}
+                  </span>
+                )}
+              </div>
+              <div className="space-y-1">
+                {synergiesWithHistory.map((synergy) => {
+                  const otherPlayer =
+                    synergy.player1 === player.name
+                      ? synergy.player2
+                      : synergy.player1;
+                  return (
+                    <div
+                      key={`${player.name}-${otherPlayer}`}
+                      className="flex items-center justify-between text-xs"
+                    >
+                      <span className="text-muted-foreground">
+                        vs {otherPlayer}
+                      </span>
+                      <span
+                        className={`font-mono ${getSynergyColorClass(
+                          synergy.contribution,
+                        )}`}
+                      >
+                        {synergy.contribution > 0 ? '+' : ''}
+                        {synergy.contribution.toFixed(2)}
+                        <span className="ml-1 text-muted-foreground">
+                          ({synergy.winsTogether}W/{synergy.lossesTogether}L)
+                        </span>
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </li>

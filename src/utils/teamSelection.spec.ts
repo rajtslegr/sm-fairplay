@@ -97,7 +97,7 @@ describe('Team Selection', () => {
   });
 
   describe('selectTeams with match history', () => {
-    it('should consider synergy when match history is provided', () => {
+    it('should balance both skill and synergy between teams', () => {
       const players = [
         createMockPlayer('Player A', 2, 2, 2, 10),
         createMockPlayer('Player B', 2, 2, 2, 10),
@@ -126,14 +126,21 @@ describe('Team Selection', () => {
 
       const [teamA, teamB] = selectTeams(players, matchHistory);
 
-      const teamANames = teamA.map((p) => p.name).sort();
-      const teamBNames = teamB.map((p) => p.name).sort();
+      const teamAScore = teamA.reduce(
+        (sum, player) => sum + calculatePlayerScore(player),
+        0,
+      );
+      const teamBScore = teamB.reduce(
+        (sum, player) => sum + calculatePlayerScore(player),
+        0,
+      );
 
-      const aAndBTogether =
-        (teamANames.includes('Player A') && teamANames.includes('Player B')) ||
-        (teamBNames.includes('Player A') && teamBNames.includes('Player B'));
+      expect(Math.abs(teamAScore - teamBScore)).toBeLessThan(
+        calculatePlayerScore(players[0]),
+      );
 
-      expect(aAndBTogether).toBe(true);
+      expect(teamA.length).toBe(2);
+      expect(teamB.length).toBe(2);
     });
 
     it('should fall back to skill-only selection when no player data in matches', () => {

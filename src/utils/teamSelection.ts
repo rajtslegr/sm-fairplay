@@ -71,13 +71,13 @@ const calculateTeamSynergy = (team: Player[], cache: SynergyCache): number => {
   for (let i = 0; i < team.length; i += 1) {
     for (let j = i + 1; j < team.length; j += 1) {
       const key = getPlayerPairKey(team[i].name, team[j].name);
-      const games = cache.pairGames.get(key) ?? 0;
       const wins = cache.pairWins.get(key) ?? 0;
       const losses = cache.pairLosses.get(key) ?? 0;
+      const decisiveGames = wins + losses;
 
-      if (games > 0) {
-        const winRate = wins / games;
-        const lossRate = losses / games;
+      if (decisiveGames > 0) {
+        const winRate = wins / decisiveGames;
+        const lossRate = losses / decisiveGames;
         totalSynergy += winRate - lossRate;
         pairCount += 1;
       }
@@ -177,26 +177,18 @@ const selectTeamsWithHistory = (
       const teamASynergy = calculateTeamSynergy(teamA, cache);
       const teamBSynergy = calculateTeamSynergy(teamB, cache);
 
-      // Use sum of positive synergies - we want pairs with GOOD synergy
-      // to stay together (positive = won together, negative = lost together)
-      const positiveSynergySum =
-        Math.max(0, teamASynergy) + Math.max(0, teamBSynergy);
+      const synergyDiff = Math.abs(teamASynergy - teamBSynergy);
 
-      // Normalize skill diff (max possible is max player score)
       const maxPlayerScore = calculatePlayerScore(sortedPlayers[0]);
       const normalizedSkillDiff =
         maxPlayerScore > 0 ? skillDiff / maxPlayerScore : 0;
 
-      // Normalize positive synergy (each team can have synergy from 0 to 1)
-      const maxPossiblePositiveSynergy = 2; // 2 teams × 1 max positive synergy each
-      const normalizedPositiveSynergy =
-        positiveSynergySum / maxPossiblePositiveSynergy;
+      const maxPossibleSynergyDiff = 2;
+      const normalizedSynergyDiff = synergyDiff / maxPossibleSynergyDiff;
 
-      // Combined score: minimize skill diff, MAXIMIZE positive synergy
-      // When skill is equal, higher positive synergy wins
       const combinedScore =
-        SKILL_WEIGHT * normalizedSkillDiff -
-        SYNERGY_WEIGHT * normalizedPositiveSynergy;
+        SKILL_WEIGHT * normalizedSkillDiff +
+        SYNERGY_WEIGHT * normalizedSynergyDiff;
 
       if (combinedScore < bestScore) {
         bestScore = combinedScore;

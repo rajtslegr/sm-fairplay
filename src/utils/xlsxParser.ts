@@ -44,7 +44,7 @@ export const processWorkbook = (workbook: any): ParsedData => {
   const pointsData = utils.sheet_to_json(pointsSheet);
 
   const players: Player[] = scorersData.map((scorer: any, index: number) => {
-    const name = scorer.__EMPTY;
+    const name = scorer.__EMPTY?.trim();
     const goals = Number(scorer.__EMPTY_2) || 0;
     const assists = Number((assistsData[index] as any)?.__EMPTY_2) || 0;
     const points = Number((pointsData[index] as any)?.__EMPTY_2) || 0;

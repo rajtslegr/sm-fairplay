@@ -7,7 +7,7 @@ import PlayerSelection from '@components/PlayerSelection';
 import TeamDisplay from '@components/TeamDisplay';
 import { useStore } from '@store/useStore';
 import { buildPromptFromTeams } from '@utils/promptBuilder';
-import { selectTeams } from '@utils/teamSelection';
+import { selectTeamsWithStats } from '@utils/teamSelectionCore';
 import { parseXlsxData, Player } from '@utils/xlsxParser';
 
 export const Homepage = () => {
@@ -21,6 +21,7 @@ export const Homepage = () => {
     resetSelection,
     setMatchHistory,
     matchHistory,
+    debugInfo,
   } = useStore();
 
   const teamsRef = useRef<HTMLDivElement>(null);
@@ -59,8 +60,11 @@ export const Homepage = () => {
 
   const handleGenerateTeams = (selectedPlayers: Player[]) => {
     try {
-      const [newTeamA, newTeamB] = selectTeams(selectedPlayers, matchHistory);
-      setTeams(newTeamA, newTeamB);
+      const {
+        teams: [newTeamA, newTeamB],
+        debugInfo: newSelectionStats,
+      } = selectTeamsWithStats(selectedPlayers, matchHistory);
+      setTeams(newTeamA, newTeamB, newSelectionStats);
       toast.success('Teams generated successfully!');
     } catch (error) {
       console.error('Error generating teams:', error);
@@ -101,7 +105,7 @@ export const Homepage = () => {
         )}
 
         <div ref={teamsRef} className="w-full max-w-4xl">
-          <TeamDisplay teamA={teamA} teamB={teamB} />
+          <TeamDisplay teamA={teamA} teamB={teamB} selectionStats={debugInfo} />
         </div>
       </div>
     </main>

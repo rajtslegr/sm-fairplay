@@ -104,6 +104,15 @@ const normalizePlayerName = (name: string): string => {
   return PLAYER_NAME_MAPPING[trimmed] ?? trimmed;
 };
 
+const shouldUseTotalScore = (teamA: Player[], teamB: Player[]): boolean => {
+  const maxSize = Math.max(teamA.length, teamB.length);
+  const sizeDiff = Math.abs(teamA.length - teamB.length);
+
+  // For 3v4 (max 4 players, diff of 1), use total score
+  // For 5v4 and higher, use average per player
+  return maxSize <= 4 && sizeDiff === 1;
+};
+
 const buildSynergyCache = (matchHistory: Match[]): SynergyCache => {
   const pairWins = new Map<string, number>();
   const pairLosses = new Map<string, number>();
@@ -291,9 +300,17 @@ const selectTeamsWithoutHistoryWithDebug = (
         0,
       );
 
-      const avgSkillA = teamA.length > 0 ? teamAScore / teamA.length : 0;
-      const avgSkillB = teamB.length > 0 ? teamBScore / teamB.length : 0;
-      const skillDifference = Math.abs(avgSkillA - avgSkillB);
+      const useTotalScore = shouldUseTotalScore(teamA, teamB);
+      let scoreA: number;
+      let scoreB: number;
+      if (useTotalScore) {
+        scoreA = teamAScore;
+        scoreB = teamBScore;
+      } else {
+        scoreA = teamA.length > 0 ? teamAScore / teamA.length : 0;
+        scoreB = teamB.length > 0 ? teamBScore / teamB.length : 0;
+      }
+      const skillDifference = Math.abs(scoreA - scoreB);
 
       const isValid =
         skillDifference < minScoreDifference &&
@@ -406,9 +423,6 @@ const selectTeamsWithHistoryWithDebug = (
   let bestTeamB: Player[] = [];
   let bestScore = Infinity;
 
-  const SKILL_WEIGHT = 0.7;
-  const SYNERGY_WEIGHT = 0.3;
-
   const combinations: CombinationAttempt[] = [];
   let combinationsTried = 0;
 
@@ -433,9 +447,21 @@ const selectTeamsWithHistoryWithDebug = (
         0,
       );
 
-      const avgSkillA = teamA.length > 0 ? teamAScore / teamA.length : 0;
-      const avgSkillB = teamB.length > 0 ? teamBScore / teamB.length : 0;
-      const skillDiff = Math.abs(avgSkillA - avgSkillB);
+      // For 3v4 prioritize total score (90% skill), for 5v4+ use 55/45 split
+      const useTotalScore = shouldUseTotalScore(teamA, teamB);
+      const skillWeight = useTotalScore ? 0.9 : 0.55;
+      const synergyWeight = useTotalScore ? 0.1 : 0.45;
+
+      let scoreA: number;
+      let scoreB: number;
+      if (useTotalScore) {
+        scoreA = teamAScore;
+        scoreB = teamBScore;
+      } else {
+        scoreA = teamA.length > 0 ? teamAScore / teamA.length : 0;
+        scoreB = teamB.length > 0 ? teamBScore / teamB.length : 0;
+      }
+      const skillDiff = Math.abs(scoreA - scoreB);
 
       const teamASynergy = calculateTeamSynergyWithDetails(
         teamA,
@@ -455,8 +481,8 @@ const selectTeamsWithHistoryWithDebug = (
       const normalizedSynergyDiff = synergyDiff / maxPossibleSynergyDiff;
 
       const combinedScore =
-        SKILL_WEIGHT * normalizedSkillDiff +
-        SYNERGY_WEIGHT * normalizedSynergyDiff;
+        skillWeight * normalizedSkillDiff +
+        synergyWeight * normalizedSynergyDiff;
 
       const isBest = combinedScore < bestScore;
 
@@ -538,6 +564,11 @@ const selectTeamsWithHistoryWithDebug = (
     synergyDetails: teamBSynergyData.details,
   };
 
+  // Determine weights used for the best teams
+  const bestTeamsUseTotalScore = shouldUseTotalScore(bestTeamA, bestTeamB);
+  const finalSkillWeight = bestTeamsUseTotalScore ? 0.9 : 0.55;
+  const finalSynergyWeight = bestTeamsUseTotalScore ? 0.1 : 0.45;
+
   return {
     teams: [bestTeamA, bestTeamB],
     debugInfo: {
@@ -547,8 +578,8 @@ const selectTeamsWithHistoryWithDebug = (
       combinationsTried,
       bestCombinationIndex: combinations.findIndex((c) => c.isBest),
       topCombinations: sortedCombinations,
-      skillWeight: SKILL_WEIGHT,
-      synergyWeight: SYNERGY_WEIGHT,
+      skillWeight: finalSkillWeight,
+      synergyWeight: finalSynergyWeight,
     },
   };
 };

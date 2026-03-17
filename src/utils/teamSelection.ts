@@ -11,6 +11,15 @@ export const calculatePlayerScore = (player: Player): number => {
   );
 };
 
+const shouldUseTotalScore = (teamA: Player[], teamB: Player[]): boolean => {
+  const maxSize = Math.max(teamA.length, teamB.length);
+  const sizeDiff = Math.abs(teamA.length - teamB.length);
+
+  // For 3v4 (max 4 players, diff of 1), use total score
+  // For 5v4 and higher, use average per player
+  return maxSize <= 4 && sizeDiff === 1;
+};
+
 export const calculateTeamScore = (team: Player[]): number =>
   team.reduce((sum, player) => sum + calculatePlayerScore(player), 0);
 
@@ -107,10 +116,18 @@ const selectTeamsWithoutHistory = (players: Player[]): [Player[], Player[]] => {
       const teamAScore = calculateTeamScore(teamA);
       const teamBScore = calculateTeamScore(teamB);
 
-      // Calculate average skill per player (handles uneven teams like 5v4)
-      const avgSkillA = teamA.length > 0 ? teamAScore / teamA.length : 0;
-      const avgSkillB = teamB.length > 0 ? teamBScore / teamB.length : 0;
-      const scoreDifference = Math.abs(avgSkillA - avgSkillB);
+      // For 3v4 use total score, for 5v4+ use average per player
+      const useTotalScore = shouldUseTotalScore(teamA, teamB);
+      let scoreA: number;
+      let scoreB: number;
+      if (useTotalScore) {
+        scoreA = teamAScore;
+        scoreB = teamBScore;
+      } else {
+        scoreA = teamA.length > 0 ? teamAScore / teamA.length : 0;
+        scoreB = teamB.length > 0 ? teamBScore / teamB.length : 0;
+      }
+      const scoreDifference = Math.abs(scoreA - scoreB);
 
       if (
         scoreDifference < minScoreDifference &&
@@ -155,9 +172,6 @@ const selectTeamsWithHistory = (
   let bestTeamB: Player[] = [];
   let bestScore = Infinity;
 
-  const SKILL_WEIGHT = 0.7;
-  const SYNERGY_WEIGHT = 0.3;
-
   const generateCombinations = (
     remainingPlayers: Player[],
     teamA: Player[],
@@ -166,13 +180,30 @@ const selectTeamsWithHistory = (
     if (remainingPlayers.length === 0) {
       if (Math.abs(teamA.length - teamB.length) > 1) return;
 
-      const teamAScore = calculateTeamScore(teamA);
-      const teamBScore = calculateTeamScore(teamB);
+      const teamAScore = teamA.reduce(
+        (sum, p) => sum + calculatePlayerScore(p),
+        0,
+      );
+      const teamBScore = teamB.reduce(
+        (sum, p) => sum + calculatePlayerScore(p),
+        0,
+      );
 
-      // Calculate average skill per player (handles uneven teams like 5v4)
-      const avgSkillA = teamA.length > 0 ? teamAScore / teamA.length : 0;
-      const avgSkillB = teamB.length > 0 ? teamBScore / teamB.length : 0;
-      const skillDiff = Math.abs(avgSkillA - avgSkillB);
+      // For 3v4 prioritize total score (90% skill), for 5v4+ use 55/45 split
+      const useTotalScore = shouldUseTotalScore(teamA, teamB);
+      const SKILL_WEIGHT = useTotalScore ? 0.9 : 0.55;
+      const SYNERGY_WEIGHT = useTotalScore ? 0.1 : 0.45;
+
+      let scoreA: number;
+      let scoreB: number;
+      if (useTotalScore) {
+        scoreA = teamAScore;
+        scoreB = teamBScore;
+      } else {
+        scoreA = teamA.length > 0 ? teamAScore / teamA.length : 0;
+        scoreB = teamB.length > 0 ? teamBScore / teamB.length : 0;
+      }
+      const skillDiff = Math.abs(scoreA - scoreB);
 
       const teamASynergy = calculateTeamSynergy(teamA, cache);
       const teamBSynergy = calculateTeamSynergy(teamB, cache);

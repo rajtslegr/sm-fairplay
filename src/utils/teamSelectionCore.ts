@@ -113,6 +113,15 @@ const shouldUseTotalScore = (teamA: Player[], teamB: Player[]): boolean => {
   return maxSize <= 4 && sizeDiff === 1;
 };
 
+const getAlgorithmWeights = (useTotalScore: boolean) => {
+  // For 3v4 prioritize total score (95% skill), for 5v4+ use 80/20 split
+  // Synergy weight reduced due to sparse match history data (23 matches, 58 pairs)
+  return {
+    skillWeight: useTotalScore ? 0.95 : 0.9,
+    synergyWeight: useTotalScore ? 0.05 : 0.1,
+  };
+};
+
 const buildSynergyCache = (matchHistory: Match[]): SynergyCache => {
   const pairWins = new Map<string, number>();
   const pairLosses = new Map<string, number>();
@@ -124,6 +133,10 @@ const buildSynergyCache = (matchHistory: Match[]): SynergyCache => {
 
     const team1Won = match.team1Goals > match.team2Goals;
     const team2Won = match.team2Goals > match.team1Goals;
+
+    if (!team1Won && !team2Won) {
+      return;
+    }
 
     team1Players.forEach((p1, i) => {
       team1Players.slice(i + 1).forEach((p2) => {
@@ -447,10 +460,8 @@ const selectTeamsWithHistoryWithDebug = (
         0,
       );
 
-      // For 3v4 prioritize total score (90% skill), for 5v4+ use 55/45 split
       const useTotalScore = shouldUseTotalScore(teamA, teamB);
-      const skillWeight = useTotalScore ? 0.9 : 0.55;
-      const synergyWeight = useTotalScore ? 0.1 : 0.45;
+      const { skillWeight, synergyWeight } = getAlgorithmWeights(useTotalScore);
 
       let scoreA: number;
       let scoreB: number;
@@ -566,8 +577,8 @@ const selectTeamsWithHistoryWithDebug = (
 
   // Determine weights used for the best teams
   const bestTeamsUseTotalScore = shouldUseTotalScore(bestTeamA, bestTeamB);
-  const finalSkillWeight = bestTeamsUseTotalScore ? 0.9 : 0.55;
-  const finalSynergyWeight = bestTeamsUseTotalScore ? 0.1 : 0.45;
+  const { skillWeight: finalSkillWeight, synergyWeight: finalSynergyWeight } =
+    getAlgorithmWeights(bestTeamsUseTotalScore);
 
   return {
     teams: [bestTeamA, bestTeamB],

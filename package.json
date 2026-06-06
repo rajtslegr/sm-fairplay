@@ -82,10 +82,5 @@
     "vite": "8.0.16",
     "vite-tsconfig-paths": "6.1.1",
     "vitest": "4.1.8"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
   }
 }

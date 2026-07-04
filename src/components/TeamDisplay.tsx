@@ -6,8 +6,7 @@ import { toast } from 'sonner';
 import { Button } from './Button';
 import PlayerCard from './PlayerCard';
 import { Card, CardHeader, CardTitle } from '@components/ui/card';
-import { calculateTeamScore } from '@utils/teamSelection';
-import { SelectionStats } from '@utils/teamSelectionCore';
+import { calculateTeamScore, SelectionStats } from '@utils/teamSelection';
 import { Player } from '@utils/xlsxParser';
 
 interface TeamDisplayProps {
@@ -186,7 +185,7 @@ const TeamDisplay = ({ teamA, teamB, selectionStats }: TeamDisplayProps) => {
         <div className="w-full sm:w-1/2">
           <Card className="mb-6 border-secondary/30 bg-secondary/15 shadow-sm">
             <CardHeader className="px-6 py-4">
-              <CardTitle className="text-center text-2xl font-semibold text-secondary dark:text-secondary-foreground sm:text-3xl">
+              <CardTitle className="text-center text-2xl font-semibold text-secondary sm:text-3xl dark:text-secondary-foreground">
                 {teamAScore.toFixed(2)}
               </CardTitle>
               {teamASynergy !== undefined && teamASynergy !== 0 && (
@@ -217,7 +216,7 @@ const TeamDisplay = ({ teamA, teamB, selectionStats }: TeamDisplayProps) => {
         <div className="w-full sm:w-1/2">
           <Card className="mb-6 border-primary/30 bg-primary/15 shadow-sm">
             <CardHeader className="px-6 py-4">
-              <CardTitle className="text-center text-2xl font-semibold text-primary dark:text-primary-foreground sm:text-3xl">
+              <CardTitle className="text-center text-2xl font-semibold text-primary sm:text-3xl dark:text-primary-foreground">
                 {teamBScore.toFixed(2)}
               </CardTitle>
               {teamBSynergy !== undefined && teamBSynergy !== 0 && (

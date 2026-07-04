@@ -1,5 +1,4 @@
-/* eslint-disable no-underscore-dangle */
-import { read, utils } from 'xlsx';
+import { read, utils, WorkBook } from 'xlsx';
 
 export interface Player {
   name: string;
@@ -26,28 +25,42 @@ export interface ParsedData {
   matches: Match[];
 }
 
+interface PlayerStatsRow {
+  __EMPTY?: string;
+  __EMPTY_1?: string | number;
+  __EMPTY_2?: string | number;
+}
+
+interface MatchHistoryRow {
+  Datum?: string | number;
+  'Tým 1'?: string | number;
+  'Tým 2'?: string | number;
+  'Hráči týmu 1'?: string;
+  'Hráči týmu 2'?: string;
+}
+
 const excelDateToJSDate = (excelDate: number): Date => {
   const millisecondsPerDay = 24 * 60 * 60 * 1000;
   const date = new Date(Math.round((excelDate - 25569) * millisecondsPerDay));
   return date;
 };
 
-export const processWorkbook = (workbook: any): ParsedData => {
+export const processWorkbook = (workbook: WorkBook): ParsedData => {
   const scorersSheet = workbook.Sheets['Tabulka střelců'];
   const assistsSheet = workbook.Sheets['Tabulka nahrávek'];
   const pointsSheet = workbook.Sheets['Tabulka bodů'];
 
   const matchHistorySheet = workbook.Sheets['Výsledky zápasů'] || null;
 
-  const scorersData = utils.sheet_to_json(scorersSheet);
-  const assistsData = utils.sheet_to_json(assistsSheet);
-  const pointsData = utils.sheet_to_json(pointsSheet);
+  const scorersData = utils.sheet_to_json<PlayerStatsRow>(scorersSheet);
+  const assistsData = utils.sheet_to_json<PlayerStatsRow>(assistsSheet);
+  const pointsData = utils.sheet_to_json<PlayerStatsRow>(pointsSheet);
 
-  const players: Player[] = scorersData.map((scorer: any, index: number) => {
-    const name = scorer.__EMPTY?.trim();
+  const players: Player[] = scorersData.map((scorer, index) => {
+    const name = scorer.__EMPTY?.trim() ?? '';
     const goals = Number(scorer.__EMPTY_2) || 0;
-    const assists = Number((assistsData[index] as any)?.__EMPTY_2) || 0;
-    const points = Number((pointsData[index] as any)?.__EMPTY_2) || 0;
+    const assists = Number(assistsData[index]?.__EMPTY_2) || 0;
+    const points = Number(pointsData[index]?.__EMPTY_2) || 0;
     const matches = Number(scorer.__EMPTY_1) || 0;
 
     return {
@@ -69,11 +82,11 @@ export const processWorkbook = (workbook: any): ParsedData => {
   const matches: Match[] = [];
 
   if (matchHistorySheet) {
-    const matchData = utils.sheet_to_json(matchHistorySheet);
+    const matchData = utils.sheet_to_json<MatchHistoryRow>(matchHistorySheet);
     const today = new Date();
 
     if (matchData.length > 0) {
-      matchData.forEach((match: any) => {
+      matchData.forEach((match) => {
         if (!match.Datum) {
           return;
         }

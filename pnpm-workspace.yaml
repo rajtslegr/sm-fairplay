@@ -1,4 +1,6 @@
 allowBuilds:
   esbuild: set this to true or false
+minimumReleaseAgeExclude:
+  - recharts@3.9.2
 onlyBuiltDependencies:
   - esbuild

@@ -1,7 +1,7 @@
 import { create, StateCreator } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { SelectionStats } from '@utils/teamSelectionCore';
+import { SelectionStats } from '@utils/teamSelection';
 import { Match, Player } from '@utils/xlsxParser';
 
 interface AppState {

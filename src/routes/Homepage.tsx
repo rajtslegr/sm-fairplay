@@ -7,7 +7,7 @@ import PlayerSelection from '@components/PlayerSelection';
 import TeamDisplay from '@components/TeamDisplay';
 import { useStore } from '@store/useStore';
 import { buildPromptFromTeams } from '@utils/promptBuilder';
-import { selectTeamsWithStats } from '@utils/teamSelectionCore';
+import { selectTeamsWithStats } from '@utils/teamSelection';
 import { parseXlsxData, Player } from '@utils/xlsxParser';
 
 export const Homepage = () => {

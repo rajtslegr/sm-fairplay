@@ -7,10 +7,10 @@ describe('Button', () => {
     expect(screen.getByRole('button')).toBeInTheDocument();
   });
 
-  it('should call the onClick handler', () => {
+  it('should call the onClick handler', async () => {
     const onClick = vi.fn();
     render(<Button onClick={onClick()}>Click me</Button>);
-    userEvent.click(screen.getByRole('button'));
+    await userEvent.click(screen.getByRole('button'));
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 });

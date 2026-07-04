@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader } from '@components/ui/card';
 import { cn, getSynergyColorClass } from '@utils/cn';
-import { calculatePlayerScore } from '@utils/teamSelection';
-import { TeamStats } from '@utils/teamSelectionCore';
+import { calculatePlayerScore, TeamStats } from '@utils/teamSelection';
 import { Player } from '@utils/xlsxParser';
 
 interface PlayerCardProps {
@@ -60,7 +59,7 @@ const PlayerCard = ({ player, teamColor, teamStats }: PlayerCardProps) => {
             </h3>
             <div
               className={cn(
-                'font-mono flex px-2 shrink-0 items-center justify-center rounded-md text-base font-semibold text-white shadow-sm',
+                'flex shrink-0 items-center justify-center rounded-md px-2 font-mono text-base font-semibold text-white shadow-sm',
               )}
               style={{ backgroundColor: teamColor }}
             >

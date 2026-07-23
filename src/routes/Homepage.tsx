@@ -15,13 +15,14 @@ export const Homepage = () => {
     players,
     teamA,
     teamB,
-    setPlayers,
     setTeams,
     reset,
     resetSelection,
-    setMatchHistory,
     matchHistory,
     debugInfo,
+    uploadedFiles,
+    addFileData,
+    removeFileData,
   } = useStore();
 
   const teamsRef = useRef<HTMLDivElement>(null);
@@ -41,21 +42,31 @@ export const Homepage = () => {
   }, [teamA, teamB]);
 
   const handleFileUpload = async (file: File) => {
-    reset();
     const toastId = toast.loading('Processing file...');
 
     try {
-      const { players: parsedPlayers, matches } = await parseXlsxData(file);
-      setPlayers(parsedPlayers);
-      setMatchHistory(matches);
+      const data = await parseXlsxData(file);
+      addFileData(file.name, data);
 
-      toast.success('File processed successfully!');
+      toast.success(
+        `Soubor ${file.name} zpracován (${data.players.length} hráčů, ${data.matches.length} zápasů)`,
+      );
     } catch (error) {
       console.error('Error parsing XLSX file:', error);
       toast.error('Error processing file. Please try again.');
     } finally {
       toast.dismiss(toastId);
     }
+  };
+
+  const handleRemoveFile = (fileName: string) => {
+    removeFileData(fileName);
+    toast.success(`Soubor ${fileName} odebrán`);
+  };
+
+  const handleReset = () => {
+    reset();
+    toast.success('Všechna data smazána');
   };
 
   const handleGenerateTeams = (selectedPlayers: Player[]) => {
@@ -95,7 +106,14 @@ export const Homepage = () => {
   return (
     <main className="relative">
       <div className="flex min-h-[calc(100vh-6rem)] flex-col items-center justify-start px-4 py-8 sm:min-h-[calc(100vh-4rem)] sm:py-12">
-        <FileUpload onFileUpload={handleFileUpload} />
+        <FileUpload
+          onFileUpload={handleFileUpload}
+          uploadedFiles={uploadedFiles}
+          onRemoveFile={handleRemoveFile}
+          onReset={handleReset}
+          totalPlayers={players.length}
+          totalMatches={matchHistory.length}
+        />
         {players.length > 0 && (
           <PlayerSelection
             onGenerateTeams={handleGenerateTeams}

@@ -43,7 +43,7 @@ const PromptOutput = ({ promptText }: PromptOutputProps) => {
         </Button>
       </CardHeader>
       <CardContent>
-        <pre className="max-h-[480px] overflow-auto rounded-md border border-border bg-muted/40 p-4 text-xs leading-relaxed">
+        <pre className="max-h-120 overflow-auto rounded-md border border-border bg-muted/40 p-4 text-xs leading-relaxed">
           {promptText}
         </pre>
       </CardContent>

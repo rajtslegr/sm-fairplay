@@ -26,7 +26,7 @@ const PlayerPerformanceChart = ({ players }: PlayerPerformanceChartProps) => {
 
   return (
     <Card>
-      <CardContent className="h-[400px] p-4">
+      <CardContent className="h-100 p-4">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}

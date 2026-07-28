@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
-    "@playwright/test": "1.61.1",
+    "@playwright/test": "1.62.0",
     "@storybook/addon-docs": "10.5.3",
     "@storybook/addon-links": "10.5.3",
     "@storybook/addon-onboarding": "10.5.3",

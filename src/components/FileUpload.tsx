@@ -35,9 +35,9 @@ const FileUpload = ({
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      onFileUpload(file);
+    const files = event.target.files;
+    if (files) {
+      Array.from(files).forEach(onFileUpload);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -72,14 +72,14 @@ const FileUpload = ({
     event.stopPropagation();
     setIsDragging(false);
     dragCounter.current = 0;
-    const file = event.dataTransfer.files[0];
-    if (
-      file &&
-      file.type ===
+    Array.from(event.dataTransfer.files).forEach((file) => {
+      if (
+        file.type ===
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    ) {
-      onFileUpload(file);
-    }
+      ) {
+        onFileUpload(file);
+      }
+    });
   };
 
   const handlePaste = useCallback(
@@ -198,6 +198,7 @@ const FileUpload = ({
           ref={fileInputRef}
           onChange={handleFileChange}
           accept=".xlsx"
+          multiple
           className="hidden"
         />
       </Card>

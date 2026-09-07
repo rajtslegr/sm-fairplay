@@ -6,7 +6,11 @@ import { toast } from 'sonner';
 import { Button } from './Button';
 import PlayerCard from './PlayerCard';
 import { Card, CardHeader, CardTitle } from '@components/ui/card';
-import { calculateTeamScore, SelectionStats } from '@utils/teamSelection';
+import {
+  calculateTeamScore,
+  SelectionStats,
+  TeamStats,
+} from '@utils/teamSelection';
 import { Player } from '@utils/xlsxParser';
 
 interface TeamDisplayProps {
@@ -15,131 +19,117 @@ interface TeamDisplayProps {
   selectionStats?: SelectionStats | null;
 }
 
+interface TeamBlock {
+  emoji: string;
+  label: string;
+  players: Player[];
+  score: number;
+  synergy?: number;
+  teamStats?: TeamStats;
+}
+
+function formatPlayerLines(
+  player: Player,
+  teammates: Player[],
+  teamStats?: TeamStats,
+): string {
+  const teammateNames = new Set(teammates.map((p) => p.name));
+  const synergies =
+    teamStats?.synergyDetails?.filter(
+      (detail) =>
+        (detail.player1 === player.name && teammateNames.has(detail.player2)) ||
+        (detail.player2 === player.name && teammateNames.has(detail.player1)),
+    ) ?? [];
+
+  const lines = [
+    `${player.name} — ${calculateTeamScore([player]).toFixed(2)}`,
+    `Goals ${player.goalsPerMatch.toFixed(2)} · Assists ${player.assistsPerMatch.toFixed(2)} · Points ${player.pointsPerMatch.toFixed(2)}`,
+  ];
+
+  const playedTogether = synergies.filter((s) => s.gamesTogether > 0);
+  if (playedTogether.length > 0) {
+    const pairs = playedTogether.map((s) => {
+      const other = s.player1 === player.name ? s.player2 : s.player1;
+      const sign = s.contribution > 0 ? '+' : '';
+      return `${other} ${sign}${s.contribution.toFixed(2)} (${s.winsTogether}W/${s.lossesTogether}L)`;
+    });
+    lines.push(`Synergy: ${pairs.join(', ')}`);
+  }
+
+  return lines.join('\n');
+}
+
+function formatTeamBlock({
+  emoji,
+  label,
+  players,
+  score,
+  synergy,
+  teamStats,
+}: TeamBlock): string {
+  const synergyNote =
+    synergy !== undefined
+      ? ` | Synergy: ${synergy > 0 ? '+' : ''}${synergy.toFixed(3)}`
+      : '';
+
+  const playerLines = players
+    .map((player) => formatPlayerLines(player, players, teamStats))
+    .join('\n\n');
+
+  return `${emoji} ${label} — Total Score: ${score.toFixed(2)}${synergyNote}\n\n${playerLines}`;
+}
+
+function formatFooterLines(stats: SelectionStats): string[] {
+  const lines: string[] = [];
+
+  if (stats.algorithm === 'skill-and-synergy') {
+    lines.push(
+      `Algorithm: Skill + Synergy (${(stats.skillWeight * 100).toFixed(0)}% skill / ${(stats.synergyWeight * 100).toFixed(0)}% synergy)`,
+    );
+  } else {
+    lines.push('Algorithm: Skill Only');
+  }
+
+  if (stats.matchHistoryStats) {
+    const { matchesWithPlayerData, uniquePlayerPairs } =
+      stats.matchHistoryStats;
+    lines.push(
+      `Match history: ${matchesWithPlayerData} matches with player data, ${uniquePlayerPairs} unique player pairs`,
+    );
+  }
+
+  return lines;
+}
+
 function formatTeamsForEmail(
   teamA: Player[],
   teamB: Player[],
   teamAScore: number,
   teamBScore: number,
+  stats?: SelectionStats,
 ): string {
-  const formatPlayerStats = (player: Player): string => {
-    const stats = [
-      `Score: ${calculateTeamScore([player]).toFixed(2)}`,
-      `Goals: ${player.goalsPerMatch.toFixed(2)}`,
-      `Assists: ${player.assistsPerMatch.toFixed(2)}`,
-      `Points: ${player.pointsPerMatch.toFixed(2)}`,
-    ];
+  const sections = [
+    '⚽ Team Generation Results',
+    formatTeamBlock({
+      emoji: '🟢',
+      label: 'Team A',
+      players: teamA,
+      score: teamAScore,
+      synergy: stats?.teamA.synergy,
+      teamStats: stats?.teamA,
+    }),
+    formatTeamBlock({
+      emoji: '🔴',
+      label: 'Team B',
+      players: teamB,
+      score: teamBScore,
+      synergy: stats?.teamB.synergy,
+      teamStats: stats?.teamB,
+    }),
+    stats ? formatFooterLines(stats).join('\n') : '',
+  ];
 
-    return stats.join(' | ');
-  };
-
-  const formatTeam = (players: Player[]): string =>
-    players
-      .map((player) => `• ${player.name}\n  ${formatPlayerStats(player)}`)
-      .join('\n\n');
-
-  return `🟢 Team A - Total Score: ${teamAScore.toFixed(2)}\n\n${formatTeam(
-    teamA,
-  )}\n\n🔴 Team B - Total Score: ${teamBScore.toFixed(2)}\n\n${formatTeam(
-    teamB,
-  )}`;
-}
-
-function formatTeamsForEmailWithSynergy(
-  teamA: Player[],
-  teamB: Player[],
-  teamAScore: number,
-  teamBScore: number,
-  stats: SelectionStats,
-): string {
-  const formatPlayerStats = (player: Player, team: 'A' | 'B'): string => {
-    const playerScore = calculateTeamScore([player]).toFixed(2);
-    const playerBreakdown = stats.sortedPlayers.find(
-      (p) => p.name === player.name,
-    );
-
-    const lines = [
-      `Score: ${playerScore}`,
-      `  Goals: ${player.goalsPerMatch.toFixed(2)}`,
-      `  Assists: ${player.assistsPerMatch.toFixed(2)}`,
-      `  Points: ${player.pointsPerMatch.toFixed(2)}`,
-    ];
-
-    if (playerBreakdown) {
-      lines.push(
-        `  └ G:${playerBreakdown.goalsContribution.toFixed(1)} A:${playerBreakdown.assistsContribution.toFixed(1)} P:${playerBreakdown.pointsContribution.toFixed(1)}`,
-      );
-    }
-
-    // Add synergy with teammates
-    const teamStats = team === 'A' ? stats.teamA : stats.teamB;
-    const teamPlayerNames = new Set(
-      (team === 'A' ? teamA : teamB).map((p) => p.name),
-    );
-
-    const synergies = teamStats.synergyDetails?.filter(
-      (detail) =>
-        (detail.player1 === player.name &&
-          teamPlayerNames.has(detail.player2)) ||
-        (detail.player2 === player.name && teamPlayerNames.has(detail.player1)),
-    );
-
-    if (synergies && synergies.length > 0) {
-      const synergyWithHistory = synergies.filter((s) => s.gamesTogether > 0);
-      if (synergyWithHistory.length > 0) {
-        lines.push('');
-        lines.push('  Synergy with teammates:');
-        synergyWithHistory.forEach((s) => {
-          const otherPlayer = s.player1 === player.name ? s.player2 : s.player1;
-          const sign = s.contribution > 0 ? '+' : '';
-          lines.push(
-            `  • ${otherPlayer}: ${sign}${s.contribution.toFixed(2)} (${s.winsTogether}W/${s.lossesTogether}L/${s.gamesTogether}G)`,
-          );
-        });
-      }
-    }
-
-    return lines.join('\n');
-  };
-
-  const formatTeam = (players: Player[], team: 'A' | 'B'): string =>
-    players
-      .map((player) => `• ${player.name}\n  ${formatPlayerStats(player, team)}`)
-      .join('\n\n');
-
-  const teamASynergy = stats.teamA.synergy;
-  const teamBSynergy = stats.teamB.synergy;
-
-  let result = '          🏆 TEAM GENERATION RESULTS 🏆\n';
-  result += `${'═'.repeat(50)}\n\n`;
-
-  result += '🟢 TEAM A\n';
-  result += `Total Score: ${teamAScore.toFixed(2)}`;
-  if (teamASynergy !== undefined) {
-    result += ` | Synergy: ${teamASynergy > 0 ? '+' : ''}${teamASynergy.toFixed(3)}`;
-  }
-  result += `\n\n${formatTeam(teamA, 'A')}\n\n`;
-
-  result += '🔴 TEAM B\n';
-  result += `Total Score: ${teamBScore.toFixed(2)}`;
-  if (teamBSynergy !== undefined) {
-    result += ` | Synergy: ${teamBSynergy > 0 ? '+' : ''}${teamBSynergy.toFixed(3)}`;
-  }
-  result += `\n\n${formatTeam(teamB, 'B')}\n\n`;
-
-  if (stats.algorithm === 'skill-and-synergy') {
-    result += '📊 Algorithm: Skill + Synergy\n';
-    result += `Skill Weight: ${(stats.skillWeight * 100).toFixed(0)}% | `;
-    result += `Synergy Weight: ${(stats.synergyWeight * 100).toFixed(0)}%\n`;
-  } else {
-    result += '📊 Algorithm: Skill Only\n';
-  }
-
-  if (stats.matchHistoryStats) {
-    result += `\n📈 Match History: ${stats.matchHistoryStats.matchesWithPlayerData} matches with player data`;
-    result += `, ${stats.matchHistoryStats.uniquePlayerPairs} unique pairs\n`;
-  }
-
-  return result;
+  return sections.filter(Boolean).join('\n\n');
 }
 
 const TeamDisplay = ({ teamA, teamB, selectionStats }: TeamDisplayProps) => {
@@ -151,18 +141,17 @@ const TeamDisplay = ({ teamA, teamB, selectionStats }: TeamDisplayProps) => {
   const teamASynergy = selectionStats?.teamA.synergy;
   const teamBSynergy = selectionStats?.teamB.synergy;
 
-  const formattedTeams = useMemo(() => {
-    if (!selectionStats) {
-      return formatTeamsForEmail(teamA, teamB, teamAScore, teamBScore);
-    }
-    return formatTeamsForEmailWithSynergy(
-      teamA,
-      teamB,
-      teamAScore,
-      teamBScore,
-      selectionStats,
-    );
-  }, [teamA, teamB, teamAScore, teamBScore, selectionStats]);
+  const formattedTeams = useMemo(
+    () =>
+      formatTeamsForEmail(
+        teamA,
+        teamB,
+        teamAScore,
+        teamBScore,
+        selectionStats ?? undefined,
+      ),
+    [teamA, teamB, teamAScore, teamBScore, selectionStats],
+  );
 
   const handleCopyToClipboard = async () => {
     try {

@@ -8,7 +8,7 @@ const Root = () => {
 
   return (
     <div className="font-inter flex min-h-screen flex-col bg-background text-foreground">
-      <header className="fixed z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="fixed z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-8">
             <img

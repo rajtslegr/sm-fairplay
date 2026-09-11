@@ -63,7 +63,6 @@ const PlayerSelection = ({
   };
 
   const handleReset = () => {
-    setSelectedPlayers([]);
     onResetSelection();
     setListChanged(false);
   };

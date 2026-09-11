@@ -121,7 +121,7 @@ interface PairRecord {
 
 type PairRecords = Map<string, PairRecord>;
 
-const normalizePlayerName = (name: string): string => {
+export const normalizePlayerName = (name: string): string => {
   const trimmed = name.trim();
   return PLAYER_NAME_MAPPING[trimmed] ?? trimmed;
 };

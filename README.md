@@ -1,15 +1,15 @@
 # sm-fairplay
 
-STEM/MARK Fair Play is a React application designed to help create balanced soccer teams based on player statistics. It allows users to upload player data from an Excel file, select players for team formation, and automatically generates two balanced teams using an optimized algorithm or AI (Kimi K2.5 via OpenRouter).
+STEM/MARK Fair Play is a React application designed to help create balanced soccer teams based on player statistics. It allows users to upload player data from an Excel file, select players for team formation, and automatically generates two balanced teams using an optimized algorithm, plus an AI-ready analysis prompt for the chosen teams.
 
 ## Features
 
 - Upload player statistics from XLSX files
 - Select players for team formation
 - Add new players on the fly
-- Automatically generate two balanced teams using dynamic programming optimization
-- AI-powered team selection using Kimi K2.5 via OpenRouter with full player data analysis
-- Local storage of OpenRouter API key (no server required)
+- Automatically generate two balanced teams using branch-and-bound optimization
+- Balance teams using match-history synergy (keeps winning pairs apart)
+- Copy an AI-ready analysis prompt describing the generated teams
 - Display team compositions with individual player statistics
 
 ## Getting Started
@@ -18,7 +18,6 @@ STEM/MARK Fair Play is a React application designed to help create balanced socc
 
 - Node.js (version 14 or higher)
 - pnpm (version 7 or higher)
-- OpenRouter API key (optional - for AI team selection feature)
 
 ### Installation
 
@@ -42,44 +41,25 @@ STEM/MARK Fair Play is a React application designed to help create balanced socc
 2. Select players for team formation from the list of uploaded players.
 3. Optionally, add new players using the "Add New Player" input field and button.
 4. Click "Generate Teams" to create two optimally balanced teams using the built-in algorithm.
-5. Alternatively, click "AI Generate Teams" to use Kimi K2.5 via OpenRouter to create balanced teams.
-   - If you haven't set an API key yet, a modal will appear prompting you to enter it.
-   - Your OpenRouter API key is stored securely in your browser's local storage.
+5. Click "Copy Prompt" to copy an AI-ready analysis prompt for the generated teams.
 6. View the generated teams and their player statistics.
 
 ## Team Generation Options
 
 ### Standard Algorithm
 
-The application uses an advanced dynamic programming algorithm to create balanced teams:
+The application uses a branch-and-bound search algorithm to create balanced teams:
 
 1. Players are initially sorted by their calculated scores
 2. The algorithm optimizes team assignments to minimize score differences
-3. Teams are kept within one player size difference
-4. Score calculation considers:
+3. When match history with player line-ups is available, teams are also balanced on pair synergy
+4. Teams are kept within one player size difference
+5. Score calculation considers:
    - Goals per match (weight: 6)
    - Assists per match (weight: 4)
    - Points per match (weight: 1)
 
 This approach ensures the most balanced possible teams while maintaining computational efficiency.
-
-### AI-Powered Team Selection
-
-For more sophisticated team balancing, the application can use Kimi K2.5 via OpenRouter:
-
-1. Complete player statistics are sent to Kimi K2.5 (all available data)
-2. The AI analyzes each player's performance metrics holistically
-3. Teams are formed using AI's expertise in balancing player abilities
-4. The AI determines the most relevant factors for team balancing without any predefined weighting formula
-
-The AI approach offers several advantages:
-
-- Uses all available player data for analysis
-- No predetermined formula or weighting system
-- Can discover patterns and relationships in player performance that fixed algorithms might miss
-- Adapts its analysis based on the specific characteristics of your player set
-
-Note: Using the AI-powered team selection requires an OpenRouter API key. The key is stored locally in your browser's storage and is never sent to our servers.
 
 ## Running Tests
 

@@ -26,7 +26,7 @@ const scoreRoute = createRoute({
     const state = useStore.getState();
 
     if (state.players.length === 0) {
-      redirect({
+      throw redirect({
         to: '/',
       });
     }

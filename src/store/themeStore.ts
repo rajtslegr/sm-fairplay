@@ -1,4 +1,4 @@
-import { create, StateCreator } from 'zustand';
+import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 type Theme = 'dark' | 'light' | 'system';
@@ -24,8 +24,8 @@ const applyTheme = (theme: 'dark' | 'light'): void => {
   root.classList.add(theme);
 };
 
-export const useThemeStore = create(
-  persist<ThemeState>(
+export const useThemeStore = create<ThemeState>()(
+  persist(
     (set, get) => ({
       theme: 'system',
       resolvedTheme: 'dark',
@@ -54,10 +54,9 @@ export const useThemeStore = create(
     }),
     {
       name: 'theme-storage',
-      partialize: (state) =>
-        ({
-          theme: state.theme,
-        }) as ThemeState,
+      partialize: (state) => ({
+        theme: state.theme,
+      }),
     },
-  ) as StateCreator<ThemeState>,
+  ),
 );

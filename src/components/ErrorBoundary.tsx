@@ -33,7 +33,7 @@ class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="flex min-h-screen items-center justify-center bg-background">
           <div className="text-center">
-            <h2 className="mb-4 text-2xl font-bold text-gray-50">
+            <h2 className="mb-4 text-2xl font-bold text-foreground">
               Oops! Something went wrong
             </h2>
             <Button onClick={() => this.setState({ hasError: false })}>

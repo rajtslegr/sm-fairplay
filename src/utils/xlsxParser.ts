@@ -56,11 +56,24 @@ export const processWorkbook = (workbook: WorkBook): ParsedData => {
   const assistsData = utils.sheet_to_json<PlayerStatsRow>(assistsSheet);
   const pointsData = utils.sheet_to_json<PlayerStatsRow>(pointsSheet);
 
-  const players: Player[] = scorersData.map((scorer, index) => {
+  const assistsByName = new Map(
+    assistsData.map((row) => [
+      row.__EMPTY?.trim() ?? '',
+      Number(row.__EMPTY_2) || 0,
+    ]),
+  );
+  const pointsByName = new Map(
+    pointsData.map((row) => [
+      row.__EMPTY?.trim() ?? '',
+      Number(row.__EMPTY_2) || 0,
+    ]),
+  );
+
+  const players: Player[] = scorersData.map((scorer) => {
     const name = scorer.__EMPTY?.trim() ?? '';
     const goals = Number(scorer.__EMPTY_2) || 0;
-    const assists = Number(assistsData[index]?.__EMPTY_2) || 0;
-    const points = Number(pointsData[index]?.__EMPTY_2) || 0;
+    const assists = assistsByName.get(name) ?? 0;
+    const points = pointsByName.get(name) ?? 0;
     const matches = Number(scorer.__EMPTY_1) || 0;
 
     return {
@@ -146,11 +159,14 @@ export const parseXlsxData = (file: File): Promise<ParsedData> => {
     const reader = new FileReader();
 
     reader.onload = (e) => {
-      const data = new Uint8Array(e.target?.result as ArrayBuffer);
-      const workbook = read(data, { type: 'array' });
+      try {
+        const data = new Uint8Array(e.target?.result as ArrayBuffer);
+        const workbook = read(data, { type: 'array' });
 
-      const parsedData = processWorkbook(workbook);
-      resolve(parsedData);
+        resolve(processWorkbook(workbook));
+      } catch (error) {
+        reject(error);
+      }
     };
 
     reader.onerror = (error) => {

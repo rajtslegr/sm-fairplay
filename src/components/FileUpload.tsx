@@ -16,6 +16,12 @@ interface FileUploadProps {
   totalMatches: number;
 }
 
+const XLSX_MIME =
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+const isXlsxFile = (file: File) =>
+  file.type === XLSX_MIME || file.name.toLowerCase().endsWith('.xlsx');
+
 const FileUpload = ({
   onFileUpload,
   uploadedFiles,
@@ -73,10 +79,7 @@ const FileUpload = ({
     setIsDragging(false);
     dragCounter.current = 0;
     Array.from(event.dataTransfer.files).forEach((file) => {
-      if (
-        file.type ===
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      ) {
+      if (isXlsxFile(file)) {
         onFileUpload(file);
       }
     });
@@ -89,11 +92,7 @@ const FileUpload = ({
         for (let i = 0; i < items.length; i += 1) {
           if (items[i].kind === 'file') {
             const file = items[i].getAsFile();
-            if (
-              file &&
-              file.type ===
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            ) {
+            if (file && isXlsxFile(file)) {
               onFileUpload(file);
               event.preventDefault();
               break;
@@ -159,7 +158,16 @@ const FileUpload = ({
       )}
 
       <Card
+        role="button"
+        tabIndex={0}
+        aria-label="Nahrát XLSX soubor"
         onClick={handleClick}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleClick();
+          }
+        }}
         className={cn(
           'flex cursor-pointer flex-col items-center justify-center border-2 border-dashed p-4 transition-colors hover:border-primary hover:bg-primary/5',
           hasFiles ? 'min-h-20' : 'min-h-50 p-6',

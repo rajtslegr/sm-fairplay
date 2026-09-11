@@ -1,5 +1,5 @@
 {
-  "name": "vite-react-starter",
+  "name": "sm-fairplay",
   "license": "MIT",
   "private": true,
   "version": "0.0.0",
@@ -11,6 +11,7 @@
     "lint-staged": "lint-staged",
     "prepare": "husky",
     "test": "vitest",
+    "test:run": "vitest run",
     "test:coverage": "vitest --coverage",
     "test:ui": "vitest --ui",
     "e2e": "playwright test",
@@ -35,7 +36,7 @@
     "sonner": "2.0.8",
     "tailwind-merge": "3.6.0",
     "tailwindcss-animate": "1.0.7",
-    "xlsx": "0.18.5",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zustand": "5.0.15"
   },
   "devDependencies": {

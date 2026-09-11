@@ -1,7 +1,7 @@
-import { create, StateCreator } from 'zustand';
+import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { SelectionStats } from '@utils/teamSelection';
+import { normalizePlayerName, SelectionStats } from '@utils/teamSelection';
 import { Match, ParsedData, Player } from '@utils/xlsxParser';
 
 export interface UploadedFileInfo {
@@ -17,14 +17,15 @@ function mergePlayersFromFiles(
 
   for (const data of Object.values(fileDataMap)) {
     for (const player of data.players) {
-      const existing = playerMap.get(player.name);
+      const name = normalizePlayerName(player.name);
+      const existing = playerMap.get(name);
       if (existing) {
         existing.goals += player.goals;
         existing.assists += player.assists;
         existing.points += player.points;
         existing.matches += player.matches;
       } else {
-        playerMap.set(player.name, { ...player });
+        playerMap.set(name, { ...player, name });
       }
     }
   }
@@ -80,8 +81,8 @@ interface AppState {
   resetSelection: () => void;
 }
 
-export const useStore = create(
-  persist<AppState>(
+export const useStore = create<AppState>()(
+  persist(
     (set) => ({
       players: [],
       teamA: [],
@@ -166,17 +167,16 @@ export const useStore = create(
     }),
     {
       name: 'fairplay-storage',
-      partialize: (state) =>
-        ({
-          players: state.players,
-          allPlayers: state.allPlayers,
-          selectedPlayers: state.selectedPlayers,
-          teamA: state.teamA,
-          teamB: state.teamB,
-          matchHistory: state.matchHistory,
-          uploadedFiles: state.uploadedFiles,
-          fileDataMap: state.fileDataMap,
-        }) as AppState,
+      partialize: (state) => ({
+        players: state.players,
+        allPlayers: state.allPlayers,
+        selectedPlayers: state.selectedPlayers,
+        teamA: state.teamA,
+        teamB: state.teamB,
+        matchHistory: state.matchHistory,
+        uploadedFiles: state.uploadedFiles,
+        fileDataMap: state.fileDataMap,
+      }),
     },
-  ) as StateCreator<AppState>,
+  ),
 );

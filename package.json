@@ -37,7 +37,7 @@
     "@typescript-eslint/parser": "8.59.4",
     "@types/node": "22.20.3",
     "autoprefixer": "10.6.1",
-    "eslint": "9.39.4",
+    "eslint": "9.39.5",
     "eslint-config-prettier": "9.1.2",
     "eslint-plugin-svelte": "2.46.1",
     "lint-staged": "17.5.1",

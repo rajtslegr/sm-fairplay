@@ -1,4 +1,4 @@
-import { read, utils, type WorkBook } from 'xlsx';
+import { read, utils, type WorkBook } from '@e965/xlsx';
 import type { ParsedData, Player, Match } from './types';
 
 interface PlayerStatsRow {

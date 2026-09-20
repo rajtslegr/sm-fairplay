@@ -36,7 +36,7 @@
 </script>
 
 <div class="relative inline-block" bind:this={containerRef}>
-	<div onclick={toggle} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && toggle()}>
+	<div class="flex" onclick={toggle} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && toggle()}>
 		{@render trigger()}
 	</div>
 

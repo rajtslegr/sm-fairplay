@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { utils, type WorkBook } from 'xlsx';
+import { utils, type WorkBook } from '@e965/xlsx';
 
 import { processWorkbook } from './xlsxParser';
 

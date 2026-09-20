@@ -3,6 +3,7 @@ import {
   normalizePlayerName,
   type SelectionStats,
 } from '$lib/utils/teamSelectionCore';
+import { SvelteMap } from 'svelte/reactivity';
 
 const STORAGE_KEY = 'fairplay-storage';
 
@@ -45,7 +46,7 @@ function loadPersisted(): PersistedState {
 }
 
 function mergePlayers(fileDataMap: Record<string, ParsedData>): Player[] {
-  const players = new Map<string, Player>();
+  const players = new SvelteMap<string, Player>();
   for (const data of Object.values(fileDataMap)) {
     for (const player of data.players) {
       const name = normalizePlayerName(player.name);

@@ -73,7 +73,7 @@
 
 <div class="mb-12 w-full max-w-6xl">
 	<div class="mb-8 grid grid-cols-2 gap-3 sm:mb-10 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-		{#each allPlayers as player}
+		{#each allPlayers as player (player.name)}
 			{@const isSelected = selectedPlayers.some((p) => p.name === player.name)}
 			<Button
 				variant={isSelected ? 'default' : 'outline'}

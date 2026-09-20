@@ -101,7 +101,7 @@
 						{/if}
 					</div>
 					<div class="space-y-1">
-						{#each synergiesWithHistory as synergy}
+						{#each synergiesWithHistory as synergy (synergy.player1 + synergy.player2)}
 							{@const otherPlayer = synergy.player1 === player.name ? synergy.player2 : synergy.player1}
 							<div class="flex items-center justify-between text-xs">
 								<span class="text-muted-foreground">vs {otherPlayer}</span>

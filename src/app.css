@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@config '../tailwind.config.ts';
 
 @layer base {
   :root {
@@ -68,7 +67,9 @@
 
 @layer utilities {
   .glass {
-    @apply bg-background/80 backdrop-blur-xl border-b border-border/50;
+    background-color: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(24px);
+    border-bottom: 1px solid hsl(var(--border) / 0.5);
   }
 
   .glow {

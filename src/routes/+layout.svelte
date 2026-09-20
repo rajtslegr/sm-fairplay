@@ -7,6 +7,7 @@
 	import { appStore } from '$lib/stores/appStore.svelte';
 	import { themeStore } from '$lib/stores/themeStore.svelte';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 
 	let { children } = $props();
 
@@ -38,14 +39,14 @@
 				/>
 				<nav class="hidden gap-6 sm:flex">
 					<a
-						href="/"
+						href={resolve('/')}
 						class="text-sm font-medium transition-colors hover:text-foreground {currentPath === '/' ? 'text-foreground' : 'text-muted-foreground'}"
 					>
 						Fair Play
 					</a>
 					{#if fileUploaded}
 						<a
-							href="/score"
+							href={resolve('/score')}
 							class="text-sm font-medium transition-colors hover:text-foreground {currentPath === '/score' ? 'text-foreground' : 'text-muted-foreground'}"
 						>
 							Score

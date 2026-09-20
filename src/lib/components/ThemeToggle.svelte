@@ -17,7 +17,6 @@
 			<span class="sr-only">Toggle theme</span>
 		</Button>
 	{/snippet}
-	{#snippet children()}
 		<DropdownMenuItem onclick={() => themeStore.setTheme('light')}>
 			<span class="flex size-4 shrink-0 items-center justify-center"><Sun class="size-4" /></span>
 			Light
@@ -39,5 +38,4 @@
 				<span class="ml-auto size-2 rounded-full bg-primary"></span>
 			{/if}
 		</DropdownMenuItem>
-	{/snippet}
 </DropdownMenu>

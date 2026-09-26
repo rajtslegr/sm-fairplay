@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@e965/xlsx": "0.20.3",
-    "bits-ui": "2.19.2",
+    "bits-ui": "2.19.3",
     "chart.js": "4.5.1",
     "clsx": "2.1.1",
     "lucide-svelte": "1.0.1",

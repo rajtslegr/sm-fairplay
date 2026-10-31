@@ -1,5 +1,5 @@
 # Build stage
-FROM node:24-alpine AS builder
+FROM node:26-alpine AS builder
 WORKDIR /app
 ENV HUSKY=0
 RUN npm install -g pnpm@12.4.2

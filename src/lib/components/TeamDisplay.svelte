@@ -40,98 +40,9 @@
 		return `🟢 Team A - Total Score: ${teamAScore.toFixed(2)}\n\n${formatTeam(teamA)}\n\n🔴 Team B - Total Score: ${teamBScore.toFixed(2)}\n\n${formatTeam(teamB)}`;
 	}
 
-	function formatTeamsForEmailWithSynergy(): string {
-		const stats = selectionStats!;
-
-		const formatPlayerStats = (player: Player, team: 'A' | 'B'): string => {
-			const playerScore = calculateTeamScore([player]).toFixed(2);
-			const playerBreakdown = stats.sortedPlayers.find((p) => p.name === player.name);
-
-			const lines = [
-				`Score: ${playerScore}`,
-				`  Goals: ${player.goalsPerMatch.toFixed(2)}`,
-				`  Assists: ${player.assistsPerMatch.toFixed(2)}`,
-				`  Points: ${player.pointsPerMatch.toFixed(2)}`
-			];
-
-			if (playerBreakdown) {
-				lines.push(
-					`  └ G:${playerBreakdown.goalsContribution.toFixed(1)} A:${playerBreakdown.assistsContribution.toFixed(1)} P:${playerBreakdown.pointsContribution.toFixed(1)}`
-				);
-			}
-
-			const teamStats = team === 'A' ? stats.teamA : stats.teamB;
-			const teamPlayerNames = new Set((team === 'A' ? teamA : teamB).map((p) => p.name));
-
-			const synergies = teamStats.synergyDetails?.filter(
-				(detail) =>
-					(detail.player1 === player.name && teamPlayerNames.has(detail.player2)) ||
-					(detail.player2 === player.name && teamPlayerNames.has(detail.player1))
-			);
-
-			if (synergies && synergies.length > 0) {
-				const synergyWithHistory = synergies.filter((s) => s.gamesTogether > 0);
-				if (synergyWithHistory.length > 0) {
-					lines.push('');
-					lines.push('  Synergy with teammates:');
-					synergyWithHistory.forEach((s) => {
-						const otherPlayer = s.player1 === player.name ? s.player2 : s.player1;
-						const sign = s.contribution > 0 ? '+' : '';
-						lines.push(
-							`  • ${otherPlayer}: ${sign}${s.contribution.toFixed(2)} (${s.winsTogether}W/${s.lossesTogether}L/${s.gamesTogether}G)`
-						);
-					});
-				}
-			}
-
-			return lines.join('\n');
-		};
-
-		const formatTeam = (players: Player[], team: 'A' | 'B'): string =>
-			players.map((player) => `• ${player.name}\n  ${formatPlayerStats(player, team)}`).join('\n\n');
-
-		let result = '          🏆 TEAM GENERATION RESULTS 🏆\n';
-		result += `${'═'.repeat(50)}\n\n`;
-
-		result += '🟢 TEAM A\n';
-		result += `Total Score: ${teamAScore.toFixed(2)}`;
-		if (teamASynergy !== undefined) {
-			result += ` | Synergy: ${teamASynergy > 0 ? '+' : ''}${teamASynergy.toFixed(3)}`;
-		}
-		result += `\n\n${formatTeam(teamA, 'A')}\n\n`;
-
-		result += '🔴 TEAM B\n';
-		result += `Total Score: ${teamBScore.toFixed(2)}`;
-		if (teamBSynergy !== undefined) {
-			result += ` | Synergy: ${teamBSynergy > 0 ? '+' : ''}${teamBSynergy.toFixed(3)}`;
-		}
-		result += `\n\n${formatTeam(teamB, 'B')}\n\n`;
-
-		if (stats.algorithm === 'skill-and-synergy') {
-			result += '📊 Algorithm: Skill + Synergy\n';
-			result += `Skill Weight: ${(stats.skillWeight * 100).toFixed(0)}% | `;
-			result += `Synergy Weight: ${(stats.synergyWeight * 100).toFixed(0)}%\n`;
-		} else {
-			result += '📊 Algorithm: Skill Only\n';
-		}
-
-		if (stats.matchHistoryStats) {
-			result += `\n📈 Match History: ${stats.matchHistoryStats.matchesWithPlayerData} matches with player data`;
-			result += `, ${stats.matchHistoryStats.uniquePlayerPairs} unique pairs\n`;
-		}
-
-		return result;
-	}
-
-	let formattedTeams = $derived(
-		selectionStats
-			? formatTeamsForEmailWithSynergy()
-			: formatTeamsForEmail()
-	);
-
 	async function handleCopyToClipboard() {
 		try {
-			await navigator.clipboard.writeText(formattedTeams);
+			await navigator.clipboard.writeText(formatTeamsForEmail());
 			toast.success('Teams copied to clipboard!');
 		} catch (error) {
 			console.error('Failed to copy teams:', error);

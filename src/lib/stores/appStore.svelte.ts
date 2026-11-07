@@ -22,6 +22,7 @@ interface PersistedState {
   matchHistory: Match[];
   uploadedFiles: UploadedFileInfo[];
   fileDataMap: Record<string, ParsedData>;
+  debugInfo: SelectionStats | null;
 }
 
 const emptyState = (): PersistedState => ({
@@ -33,6 +34,7 @@ const emptyState = (): PersistedState => ({
   matchHistory: [],
   uploadedFiles: [],
   fileDataMap: {},
+  debugInfo: null,
 });
 
 function loadPersisted(): PersistedState {
@@ -44,6 +46,9 @@ function loadPersisted(): PersistedState {
     return emptyState();
   }
 }
+
+// Read the persisted snapshot once; every field below is initialized from it.
+const persisted = loadPersisted();
 
 function mergePlayers(fileDataMap: Record<string, ParsedData>): Player[] {
   const players = new SvelteMap<string, Player>();
@@ -81,15 +86,15 @@ function getUploadedFiles(
 }
 
 class AppStore {
-  players = $state<Player[]>(loadPersisted().players);
-  allPlayers = $state<Player[]>(loadPersisted().allPlayers);
-  selectedPlayers = $state<Player[]>(loadPersisted().selectedPlayers);
-  teamA = $state<Player[]>(loadPersisted().teamA);
-  teamB = $state<Player[]>(loadPersisted().teamB);
-  matchHistory = $state<Match[]>(loadPersisted().matchHistory);
-  uploadedFiles = $state<UploadedFileInfo[]>(loadPersisted().uploadedFiles);
-  fileDataMap = $state<Record<string, ParsedData>>(loadPersisted().fileDataMap);
-  debugInfo = $state<SelectionStats | null>(null);
+  players = $state<Player[]>(persisted.players);
+  allPlayers = $state<Player[]>(persisted.allPlayers);
+  selectedPlayers = $state<Player[]>(persisted.selectedPlayers);
+  teamA = $state<Player[]>(persisted.teamA);
+  teamB = $state<Player[]>(persisted.teamB);
+  matchHistory = $state<Match[]>(persisted.matchHistory);
+  uploadedFiles = $state<UploadedFileInfo[]>(persisted.uploadedFiles);
+  fileDataMap = $state<Record<string, ParsedData>>(persisted.fileDataMap);
+  debugInfo = $state<SelectionStats | null>(persisted.debugInfo ?? null);
   showAbout = $state(false);
 
   private save() {
@@ -106,6 +111,7 @@ class AppStore {
           matchHistory: this.matchHistory,
           uploadedFiles: this.uploadedFiles,
           fileDataMap: this.fileDataMap,
+          debugInfo: this.debugInfo,
         }),
       );
     } catch {
@@ -176,7 +182,6 @@ class AppStore {
 
   reset() {
     Object.assign(this, emptyState());
-    this.debugInfo = null;
     this.save();
   }
 

@@ -44,7 +44,7 @@
     "eslint-plugin-svelte": "3.24.1",
     "lint-staged": "17.6.0",
     "postcss": "8.5.32",
-    "prettier": "3.9.10",
+    "prettier": "3.10.0",
     "prettier-plugin-svelte": "4.1.1",
     "prettier-plugin-tailwindcss": "0.8.1",
     "svelte": "5.57.3",

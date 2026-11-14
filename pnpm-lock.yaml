@@ -170,8 +170,8 @@ importers:
         specifier: 0.20.3
         version: 0.20.3
       bits-ui:
-        specifier: 2.20.6
-        version: 2.20.6(@internationalized/date@3.12.4)(@sveltejs/kit@2.70.4(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.3(@typescript-eslint/types@8.72.2))(vite@8.3.8(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.3(@typescript-eslint/types@8.72.2))(typescript@6.0.3)(vite@8.3.8(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.3(@typescript-eslint/types@8.72.2))
+        specifier: 2.21.0
+        version: 2.21.0(@internationalized/date@3.12.4)(@sveltejs/kit@2.70.4(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.3(@typescript-eslint/types@8.72.2))(vite@8.3.8(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.3(@typescript-eslint/types@8.72.2))(typescript@6.0.3)(vite@8.3.8(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.3(@typescript-eslint/types@8.72.2))
       chart.js:
         specifier: 4.6.1
         version: 4.6.1
@@ -900,8 +900,8 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
-  bits-ui@2.20.6:
-    resolution: {integrity: sha512-V4fgaFAtw+d8xS+3SBuLqouDsAo06991oJnW3hdEx0O1O/sl+BGLKKdZ0i4ZI1mgqT0JXJJ+6avI750OkvgZrA==}
+  bits-ui@2.21.0:
+    resolution: {integrity: sha512-kfJonux4r+XOnqGCBQaqFfhRUvDbuZQgyjXADfk0/QJGc8LlQchkrGc6rCd+ldo1EixCJEXlM7znKVIUtuf7OQ==}
     engines: {node: '>=20'}
     peerDependencies:
       '@internationalized/date': ^3.8.1
@@ -2313,7 +2313,7 @@ snapshots:
 
   baseline-browser-mapping@2.11.25: {}
 
-  bits-ui@2.20.6(@internationalized/date@3.12.4)(@sveltejs/kit@2.70.4(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.3(@typescript-eslint/types@8.72.2))(vite@8.3.8(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.3(@typescript-eslint/types@8.72.2))(typescript@6.0.3)(vite@8.3.8(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.3(@typescript-eslint/types@8.72.2)):
+  bits-ui@2.21.0(@internationalized/date@3.12.4)(@sveltejs/kit@2.70.4(@sveltejs/vite-plugin-svelte@7.3.1(svelte@5.57.3(@typescript-eslint/types@8.72.2))(vite@8.3.8(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.3(@typescript-eslint/types@8.72.2))(typescript@6.0.3)(vite@8.3.8(@types/node@26.6.6)(jiti@2.7.0)(yaml@2.9.1)))(svelte@5.57.3(@typescript-eslint/types@8.72.2)):
     dependencies:
       '@floating-ui/core': 1.8.0
       '@floating-ui/dom': 1.8.0
